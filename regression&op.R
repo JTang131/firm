@@ -45,6 +45,7 @@ stargazer(reg25,reg26)
 
 
 #solow regression
+#change file path
 
 op <- read.csv("E:/firm project/data/op.csv", header=FALSE)
 attach(op)
