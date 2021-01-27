@@ -46,7 +46,7 @@ stargazer(reg25,reg26)
 
 #solow regression
 
-op <- read.csv("H:/PhD/firm project/data/op.csv", header=FALSE)
+op <- read.csv("E:/firm project/data/op.csv", header=FALSE)
 attach(op)
 #fixed effect
 reg3=felm(log(V4)~log(V5)+log(V6)|V1+V2|0|V3,data = op)
