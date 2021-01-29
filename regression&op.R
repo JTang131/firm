@@ -7,12 +7,13 @@ library(pracma)
 library(stargazer)
 library(plm)
 
+#LP Horizon 1
 dat1 <- read.csv("E:/firm project/data/dat1.csv", header=FALSE)
 
 attach(dat1)
 
 indyear=dat1$V3*10000+dat1$V4
-reg1=felm(V1~V5+I(V5*V6)|indyear|0|V2,data = dat1)
+reg1=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = dat1)
 summary(reg1)
 
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
@@ -26,6 +27,181 @@ reg23=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = dat2)
 summary(reg23)
 reg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = dat2)
 summary(reg24)
+
+# LP Horizon 2
+lp2 <- read.csv("E:/firm project/data/lp2.csv", header=FALSE)
+attach(lp2)
+indyear=lp2$V3*10000+lp2$V4
+reg1_lp2=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = lp2)
+summary(reg1_lp2)
+
+lp2r <- read.csv("E:/firm project/data/lp2r.csv", header=FALSE)
+attach(lp2r)
+indyear=lp2r$V3*10000+lp2r$V4
+reg21_lp2=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = lp2r)
+summary(reg21_lp2)
+reg22_lp2=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp2r)
+summary(reg22_lp2)
+reg23_lp2=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = lp2r)
+summary(reg23_lp2)
+reg24_lp2=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = lp2r)
+summary(reg24_lp2)
+
+# LP Horizon 3
+lp3 <- read.csv("E:/firm project/data/lp3.csv", header=FALSE)
+attach(lp3)
+indyear=lp3$V3*10000+lp3$V4
+reg1_lp3=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = lp3)
+summary(reg1_lp3)
+
+lp3r <- read.csv("E:/firm project/data/lp3r.csv", header=FALSE)
+attach(lp3r)
+indyear=lp3r$V3*10000+lp3r$V4
+reg21_lp3=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = lp3r)
+summary(reg21_lp3)
+reg22_lp3=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp3r)
+summary(reg22_lp3)
+reg23_lp3=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = lp3r)
+summary(reg23_lp3)
+reg24_lp3=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = lp3r)
+summary(reg24_lp3)
+
+# LP Horizon 4
+lp4<- read.csv("E:/firm project/data/lp4.csv", header=FALSE)
+attach(lp4)
+indyear=lp4$V3*10000+lp4$V4
+reg1_lp4=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = lp4)
+summary(reg1_lp4)
+
+lp4r <- read.csv("E:/firm project/data/lp4r.csv", header=FALSE)
+attach(lp4r)
+indyear=lp4r$V3*10000+lp4r$V4
+reg21_lp4=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = lp4r)
+summary(reg21_lp4)
+reg22_lp4=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp4r)
+summary(reg22_lp4)
+reg23_lp4=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = lp4r)
+summary(reg23_lp4)
+reg24_lp4=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = lp4r)
+summary(reg24_lp4)
+
+# LP Horizon 5
+lp5<- read.csv("E:/firm project/data/lp5.csv", header=FALSE)
+attach(lp5)
+indyear=lp5$V3*10000+lp5$V4
+reg1_lp5=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = lp5)
+summary(reg1_lp5)
+
+lp5r <- read.csv("E:/firm project/data/lp5r.csv", header=FALSE)
+attach(lp5r)
+indyear=lp5r$V3*10000+lp5r$V4
+reg21_lp5=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = lp5r)
+summary(reg21_lp5)
+reg22_lp5=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp5r)
+summary(reg22_lp5)
+reg23_lp5=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = lp5r)
+summary(reg23_lp5)
+reg24_lp5=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = lp5r)
+summary(reg24_lp5)
+
+
+#LP Placebo H1
+pdat1 <- read.csv("E:/firm project/data/pdat1.csv", header=FALSE)
+
+attach(pdat1)
+
+indyear=pdat1$V3*10000+pdat1$V4
+preg1=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = pdat1)
+summary(preg1)
+
+pdat2 <- read.csv("E:/firm project/data/pdat2.csv", header=FALSE)
+attach(pdat2)
+indyear=pdat2$V3*10000+pdat2$V4
+preg21=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = pdat2)
+summary(preg21)
+preg22=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = pdat2)
+summary(preg22)
+preg23=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = pdat2)
+summary(reg23)
+preg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = pdat2)
+summary(preg24)
+
+#LP Placebo H2
+plp2 <- read.csv("E:/firm project/data/plp2.csv", header=FALSE)
+attach(plp2)
+indyear=plp2$V3*10000+plp2$V4
+reg1_plp2=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = plp2)
+summary(reg1_plp2)
+
+plp2r <- read.csv("E:/firm project/data/plp2r.csv", header=FALSE)
+attach(plp2r)
+indyear=plp2r$V3*10000+plp2r$V4
+reg21_plp2=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp2r)
+summary(reg21_plp2)
+reg22_plp2=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = plp2r)
+summary(reg22_plp2)
+reg23_plp2=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp2r)
+summary(reg23_plp2)
+reg24_plp2=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp2r)
+summary(reg24_plp2)
+
+#LP Placebo H3
+plp3 <- read.csv("E:/firm project/data/plp3.csv", header=FALSE)
+attach(plp3)
+indyear=plp3$V3*10000+plp3$V4
+reg1_plp3=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = plp3)
+summary(reg1_plp3)
+
+plp3r <- read.csv("E:/firm project/data/plp3r.csv", header=FALSE)
+attach(plp3r)
+indyear=plp3r$V3*10000+plp3r$V4
+reg21_plp3=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp3r)
+summary(reg21_plp3)
+reg22_plp3=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = plp3r)
+summary(reg22_plp3)
+reg23_plp3=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp3r)
+summary(reg23_plp3)
+reg24_plp3=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp3r)
+summary(reg24_plp3)
+
+#LP Placebo H4
+plp4 <- read.csv("E:/firm project/data/plp4.csv", header=FALSE)
+attach(plp4)
+indyear=plp4$V3*10000+plp4$V4
+reg1_plp4=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = plp4)
+summary(reg1_plp4)
+
+plp4r <- read.csv("E:/firm project/data/plp4r.csv", header=FALSE)
+attach(plp4r)
+indyear=plp4r$V3*10000+plp4r$V4
+reg21_plp4=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp4r)
+summary(reg21_plp4)
+reg22_plp4=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = plp4r)
+summary(reg22_plp4)
+reg23_plp4=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp4r)
+summary(reg23_plp4)
+reg24_plp4=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp4r)
+summary(reg24_plp4)
+
+#LP Placebo H5
+plp5 <- read.csv("E:/firm project/data/plp5.csv", header=FALSE)
+attach(plp5)
+indyear=plp5$V3*10000+plp5$V4
+reg1_plp5=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = plp5)
+summary(reg1_plp5)
+
+plp5r <- read.csv("E:/firm project/data/plp5r.csv", header=FALSE)
+attach(plp5r)
+indyear=plp5r$V3*10000+plp5r$V4
+reg21_plp5=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp5r)
+summary(reg21_plp5)
+reg22_plp5=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = plp5r)
+summary(reg22_plp5)
+reg23_plp5=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp5r)
+summary(reg23_plp5)
+reg24_plp5=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp5r)
+summary(reg24_plp5)
+
 
 #industry level regression
 #disp change
@@ -45,7 +221,7 @@ stargazer(reg25,reg26)
 
 
 #solow regression
-#change file path
+#estimating the op parameter for capital
 
 op <- read.csv("E:/firm project/data/op.csv", header=FALSE)
 attach(op)
