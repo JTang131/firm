@@ -28,7 +28,7 @@ summary(reg23)
 reg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = dat2)
 summary(reg24)
 wage=dat2$V6/dat2$V8
-reg25=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|0,data = dat2)
+reg25=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = dat2)
 summary(reg25)
 
 
@@ -36,7 +36,7 @@ summary(reg25)
 lp2 <- read.csv("E:/firm project/data/lp2.csv", header=FALSE)
 attach(lp2)
 indyear=lp2$V3*10000+lp2$V4
-reg1_lp2=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = lp2)
+reg1_lp2=felm(V1~V5+I(V5*V6)|indyear+V2|0|V2,data = lp2)
 summary(reg1_lp2)
 
 lp2r <- read.csv("E:/firm project/data/lp2r.csv", header=FALSE)
@@ -140,6 +140,9 @@ preg23=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = pdat2)
 summary(reg23)
 preg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = pdat2)
 summary(preg24)
+wage=pdat2$V6/pdat2$V8
+preg25=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = pdat2)
+summary(preg25)
 
 #LP Placebo H2
 plp2 <- read.csv("E:/firm project/data/plp2.csv", header=FALSE)
@@ -159,6 +162,11 @@ reg23_plp2=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp2r)
 summary(reg23_plp2)
 reg24_plp2=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp2r)
 summary(reg24_plp2)
+wage=plp2r$V6/plp2r$V8
+reg25_plp2=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp2r)
+summary(reg25_plp2)
+
+
 
 #LP Placebo H3
 plp3 <- read.csv("E:/firm project/data/plp3.csv", header=FALSE)
@@ -178,6 +186,9 @@ reg23_plp3=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp3r)
 summary(reg23_plp3)
 reg24_plp3=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp3r)
 summary(reg24_plp3)
+wage=plp3r$V6/plp3r$V8
+reg25_plp3=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp3r)
+summary(reg25_plp3)
 
 #LP Placebo H4
 plp4 <- read.csv("E:/firm project/data/plp4.csv", header=FALSE)
@@ -197,6 +208,9 @@ reg23_plp4=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp4r)
 summary(reg23_plp4)
 reg24_plp4=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp4r)
 summary(reg24_plp4)
+wage=plp4r$V6/plp4r$V8
+reg25_plp4=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp4r)
+summary(reg25_plp4)
 
 #LP Placebo H5
 plp5 <- read.csv("E:/firm project/data/plp5.csv", header=FALSE)
@@ -216,6 +230,9 @@ reg23_plp5=felm(V1~V5+V6+I(V5*V6)+V8+V10|V3+V4|0|V3,data = plp5r)
 summary(reg23_plp5)
 reg24_plp5=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp5r)
 summary(reg24_plp5)
+wage=plp5r$V6/plp5r$V8
+reg25_plp5=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp5r)
+summary(reg25_plp5)
 
 
 #irf
@@ -225,31 +242,31 @@ irf_low = matrix(NaN, 1, 5)
 
 confint=1.96
 irf_mean[[1,1]]=reg21$coefficients[3]
-irf_up[[1,1]]=reg21$coefficients[3]+confint*reg21$se[3]
-irf_low[[1,1]]=reg21$coefficients[3]-confint*reg21$se[3]
+irf_up[[1,1]]=reg21$coefficients[3]+confint*reg21$cse[3]
+irf_low[[1,1]]=reg21$coefficients[3]-confint*reg21$cse[3]
 
 irf_mean[[1,2]]=reg21_lp2$coefficients[3]
-irf_up[[1,2]]=reg21_lp2$coefficients[3]+confint*reg21_lp2$se[3]
-irf_low[[1,2]]=reg21_lp2$coefficients[3]-confint*reg21_lp2$se[3]
+irf_up[[1,2]]=reg21_lp2$coefficients[3]+confint*reg21_lp2$cse[3]
+irf_low[[1,2]]=reg21_lp2$coefficients[3]-confint*reg21_lp2$cse[3]
 
 irf_mean[[1,3]]=reg21_lp3$coefficients[3]
-irf_up[[1,3]]=reg21_lp3$coefficients[3]+confint*reg21_lp3$se[3]
-irf_low[[1,3]]=reg21_lp3$coefficients[3]-confint*reg21_lp3$se[3]
+irf_up[[1,3]]=reg21_lp3$coefficients[3]+confint*reg21_lp3$cse[3]
+irf_low[[1,3]]=reg21_lp3$coefficients[3]-confint*reg21_lp3$cse[3]
 
 irf_mean[[1,4]]=reg21_lp4$coefficients[3]
-irf_up[[1,4]]=reg21_lp4$coefficients[3]+confint*reg21_lp4$se[3]
-irf_low[[1,4]]=reg21_lp4$coefficients[3]-confint*reg21_lp4$se[3]
+irf_up[[1,4]]=reg21_lp4$coefficients[3]+confint*reg21_lp4$cse[3]
+irf_low[[1,4]]=reg21_lp4$coefficients[3]-confint*reg21_lp4$cse[3]
 
 
 irf_mean[[1,5]]=reg21_lp5$coefficients[3]
-irf_up[[1,5]]=reg21_lp5$coefficients[3]+confint*reg21_lp5$se[3]
-irf_low[[1,5]]=reg21_lp5$coefficients[3]-confint*reg21_lp5$se[3]
+irf_up[[1,5]]=reg21_lp5$coefficients[3]+confint*reg21_lp5$cse[3]
+irf_low[[1,5]]=reg21_lp5$coefficients[3]-confint*reg21_lp5$cse[3]
 
-irf = list(irf_mean       = irf_mean*100,
-               irf_low    = irf_low*100,
-               irf_up     = irf_up*100)
+irf = list(irf_mean       = irf_mean,
+               irf_low    = irf_low,
+               irf_up     = irf_up)
 
-plot(irf$irf_low, type="n", ylim = c(2, 10), xlim = c(1,5),
+plot(irf$irf_low, type="n", ylim = c(-0.1, 0.2), xlim = c(1,5),
      ylab = "Your label", xlab = "Another label",cex.axis=1.5)
 
 
@@ -274,33 +291,33 @@ irf_up = matrix(NaN, 1, 5)
 irf_low = matrix(NaN, 1, 5)
 
 confint=1.96
-irf_mean[[1,1]]=reg1$coefficients[2]
-irf_up[[1,1]]=reg1$coefficients[2]+confint*reg1$se[2]
-irf_low[[1,1]]=reg1$coefficients[2]-confint*reg1$se[2]
+irf_mean[[1,1]]=reg25$coefficients[2]
+irf_up[[1,1]]=reg25$coefficients[2]+confint*reg25$cse[2]
+irf_low[[1,1]]=reg25$coefficients[2]-confint*reg25$cse[2]
 
-irf_mean[[1,2]]=reg1_lp2$coefficients[2]
-irf_up[[1,2]]=reg1_lp2$coefficients[2]+confint*reg1_lp2$se[2]
-irf_low[[1,2]]=reg1_lp2$coefficients[2]-confint*reg1_lp2$se[2]
+irf_mean[[1,2]]=reg25_lp2$coefficients[2]
+irf_up[[1,2]]=reg25_lp2$coefficients[2]+confint*reg25_lp2$cse[2]
+irf_low[[1,2]]=reg25_lp2$coefficients[2]-confint*reg25_lp2$cse[2]
 
-irf_mean[[1,3]]=reg1_lp3$coefficients[2]
-irf_up[[1,3]]=reg1_lp3$coefficients[2]+confint*reg1_lp3$se[2]
-irf_low[[1,3]]=reg1_lp3$coefficients[2]-confint*reg1_lp3$se[2]
+irf_mean[[1,3]]=reg25_lp3$coefficients[2]
+irf_up[[1,3]]=reg25_lp3$coefficients[2]+confint*reg25_lp3$cse[2]
+irf_low[[1,3]]=reg25_lp3$coefficients[2]-confint*reg25_lp3$cse[2]
 
-irf_mean[[1,4]]=reg1_lp4$coefficients[2]
-irf_up[[1,4]]=reg1_lp4$coefficients[2]+confint*reg1_lp4$se[2]
-irf_low[[1,4]]=reg1_lp4$coefficients[2]-confint*reg1_lp4$se[2]
+irf_mean[[1,4]]=reg25_lp4$coefficients[2]
+irf_up[[1,4]]=reg25_lp4$coefficients[2]+confint*reg25_lp4$cse[2]
+irf_low[[1,4]]=reg25_lp4$coefficients[2]-confint*reg25_lp4$cse[2]
 
 
-irf_mean[[1,5]]=reg1_lp5$coefficients[2]
-irf_up[[1,5]]=reg1_lp5$coefficients[2]+confint*reg1_lp5$se[2]
-irf_low[[1,5]]=reg1_lp5$coefficients[2]-confint*reg1_lp5$se[2]
+irf_mean[[1,5]]=reg25_lp5$coefficients[2]
+irf_up[[1,5]]=reg25_lp5$coefficients[2]+confint*reg25_lp5$cse[2]
+irf_low[[1,5]]=reg25_lp5$coefficients[2]-confint*reg25_lp5$cse[2]
 
-irf = list(irf_mean       = irf_mean*100,
-           irf_low    = irf_low*100,
-           irf_up     = irf_up*100)
+irf = list(irf_mean       = irf_mean,
+           irf_low    = irf_low,
+           irf_up     = irf_up)
 
-plot(irf$irf_low, type="n", ylim = c(-20, 100), xlim = c(1,5),
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5)
+plot(irf$irf_low, type="n", ylim = c(-1, 2), xlim = c(1,5),
+     ylab = "Your label", xlab = "Another label",cex.axis=1.5,cex.lab=1.5)
 
 
 
@@ -326,31 +343,31 @@ irf_low = matrix(NaN, 1, 5)
 
 confint=1.96
 irf_mean[[1,1]]=preg21$coefficients[3]
-irf_up[[1,1]]=preg21$coefficients[3]+confint*preg21$se[3]
-irf_low[[1,1]]=preg21$coefficients[3]-confint*preg21$se[3]
+irf_up[[1,1]]=preg21$coefficients[3]+confint*preg21$cse[3]
+irf_low[[1,1]]=preg21$coefficients[3]-confint*preg21$cse[3]
 
 irf_mean[[1,2]]=reg21_plp2$coefficients[3]
-irf_up[[1,2]]=reg21_plp2$coefficients[3]+confint*reg21_plp2$se[3]
-irf_low[[1,2]]=reg21_plp2$coefficients[3]-confint*reg21_plp2$se[3]
+irf_up[[1,2]]=reg21_plp2$coefficients[3]+confint*reg21_plp2$cse[3]
+irf_low[[1,2]]=reg21_plp2$coefficients[3]-confint*reg21_plp2$cse[3]
 
 irf_mean[[1,3]]=reg21_plp3$coefficients[3]
-irf_up[[1,3]]=reg21_plp3$coefficients[3]+confint*reg21_plp3$se[3]
-irf_low[[1,3]]=reg21_plp3$coefficients[3]-confint*reg21_plp3$se[3]
+irf_up[[1,3]]=reg21_plp3$coefficients[3]+confint*reg21_plp3$cse[3]
+irf_low[[1,3]]=reg21_plp3$coefficients[3]-confint*reg21_plp3$cse[3]
 
 irf_mean[[1,4]]=reg21_plp4$coefficients[3]
-irf_up[[1,4]]=reg21_plp4$coefficients[3]+confint*reg21_plp4$se[3]
-irf_low[[1,4]]=reg21_plp4$coefficients[3]-confint*reg21_plp4$se[3]
+irf_up[[1,4]]=reg21_plp4$coefficients[3]+confint*reg21_plp4$cse[3]
+irf_low[[1,4]]=reg21_plp4$coefficients[3]-confint*reg21_plp4$cse[3]
 
 
 irf_mean[[1,5]]=reg21_plp5$coefficients[3]
-irf_up[[1,5]]=reg21_plp5$coefficients[3]+confint*reg21_plp5$se[3]
-irf_low[[1,5]]=reg21_plp5$coefficients[3]-confint*reg21_plp5$se[3]
+irf_up[[1,5]]=reg21_plp5$coefficients[3]+confint*reg21_plp5$cse[3]
+irf_low[[1,5]]=reg21_plp5$coefficients[3]-confint*reg21_plp5$cse[3]
 
-irf = list(irf_mean       = irf_mean*100,
-           irf_low    = irf_low*100,
-           irf_up     = irf_up*100)
+irf = list(irf_mean       = irf_mean,
+           irf_low    = irf_low,
+           irf_up     = irf_up)
 
-plot(irf$irf_low, type="n", ylim = c(-6, 5), xlim = c(1,5),
+plot(irf$irf_low, type="n", ylim = c(-0.5, 0.5), xlim = c(1,5),
      ylab = "Your label", xlab = "Another label",cex.axis=1.5)
 
 
@@ -368,7 +385,55 @@ abline(h=0,lwd = 2)
 
 box(lwd=2)
 
+#not rnd adjusted
 
+irf_mean = matrix(NaN, 1, 5)
+irf_up = matrix(NaN, 1, 5)
+irf_low = matrix(NaN, 1, 5)
+
+confint=1.96
+irf_mean[[1,1]]=preg25$coefficients[2]
+irf_up[[1,1]]=preg25$coefficients[2]+confint*preg25$cse[2]
+irf_low[[1,1]]=preg25$coefficients[2]-confint*preg25$cse[2]
+
+irf_mean[[1,2]]=reg25_plp2$coefficients[2]
+irf_up[[1,2]]=reg25_plp2$coefficients[2]+confint*reg25_plp2$cse[2]
+irf_low[[1,2]]=reg25_plp2$coefficients[2]-confint*reg25_plp2$cse[2]
+
+irf_mean[[1,3]]=reg25_plp3$coefficients[2]
+irf_up[[1,3]]=reg25_plp3$coefficients[2]+confint*reg25_plp3$cse[2]
+irf_low[[1,3]]=reg25_plp3$coefficients[2]-confint*reg25_plp3$cse[2]
+
+irf_mean[[1,4]]=reg25_plp4$coefficients[2]
+irf_up[[1,4]]=reg25_plp4$coefficients[2]+confint*reg25_plp4$cse[2]
+irf_low[[1,4]]=reg25_plp4$coefficients[2]-confint*reg25_plp4$cse[2]
+
+
+irf_mean[[1,5]]=reg25_plp5$coefficients[2]
+irf_up[[1,5]]=reg25_plp5$coefficients[2]+confint*reg25_plp5$cse[2]
+irf_low[[1,5]]=reg25_plp5$coefficients[2]-confint*reg25_plp5$cse[2]
+
+irf = list(irf_mean       = irf_mean,
+           irf_low    = irf_low,
+           irf_up     = irf_up)
+
+plot(irf$irf_low, type="n", ylim = c(-1, 1), xlim = c(1,5),
+     ylab = "Your label", xlab = "Another label",cex.axis=1.5)
+
+
+
+# draw the filled polygon for confidence intervals
+polygon(
+  c(1:length(irf$irf_low), length(irf$irf_low):1),
+  c(irf$irf_up, rev(irf$irf_low)), 
+  col = "grey80", border = NA)
+
+# add coefficient estimate line
+lines(1:5,irf$irf_mean, col = "red",lwd = 4)
+abline(h=0,lwd = 2)
+
+
+box(lwd=2)
 
 
 #industry level regression
