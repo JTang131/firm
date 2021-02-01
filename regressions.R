@@ -267,7 +267,7 @@ irf = list(irf_mean       = irf_mean,
                irf_up     = irf_up)
 
 plot(irf$irf_low, type="n", ylim = c(-0.1, 0.2), xlim = c(1,5),
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5)
+     ylab = "%", xlab = "Year",cex.axis=1.5,cex.lab=1.5)
 
 
 
@@ -317,11 +317,7 @@ irf = list(irf_mean       = irf_mean,
            irf_up     = irf_up)
 
 plot(irf$irf_low, type="n", ylim = c(-1, 2), xlim = c(1,5),
-<<<<<<< HEAD
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5,cex.lab=1.5)
-=======
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5)
->>>>>>> c04cbc88fa8ce91c526caab30ae21be7790a606a
+     ylab = "%", xlab = "year",cex.axis=1.5,cex.lab=1.5)
 
 
 
@@ -372,7 +368,7 @@ irf = list(irf_mean       = irf_mean,
            irf_up     = irf_up)
 
 plot(irf$irf_low, type="n", ylim = c(-0.5, 0.5), xlim = c(1,5),
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5)
+     ylab = "%", xlab = "Year",cex.axis=1.5, cex.lab=1.5)
 
 
 
@@ -411,7 +407,6 @@ irf_low[[1,3]]=reg25_plp3$coefficients[2]-confint*reg25_plp3$cse[2]
 irf_mean[[1,4]]=reg25_plp4$coefficients[2]
 irf_up[[1,4]]=reg25_plp4$coefficients[2]+confint*reg25_plp4$cse[2]
 irf_low[[1,4]]=reg25_plp4$coefficients[2]-confint*reg25_plp4$cse[2]
-<<<<<<< HEAD
 
 
 irf_mean[[1,5]]=reg25_plp5$coefficients[2]
@@ -421,37 +416,9 @@ irf_low[[1,5]]=reg25_plp5$coefficients[2]-confint*reg25_plp5$cse[2]
 irf = list(irf_mean       = irf_mean,
            irf_low    = irf_low,
            irf_up     = irf_up)
-=======
->>>>>>> c04cbc88fa8ce91c526caab30ae21be7790a606a
 
-plot(irf$irf_low, type="n", ylim = c(-1, 1), xlim = c(1,5),
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5)
-
-
-
-# draw the filled polygon for confidence intervals
-polygon(
-  c(1:length(irf$irf_low), length(irf$irf_low):1),
-  c(irf$irf_up, rev(irf$irf_low)), 
-  col = "grey80", border = NA)
-
-# add coefficient estimate line
-lines(1:5,irf$irf_mean, col = "red",lwd = 4)
-abline(h=0,lwd = 2)
-
-
-box(lwd=2)
-
-irf_mean[[1,5]]=reg25_plp5$coefficients[2]
-irf_up[[1,5]]=reg25_plp5$coefficients[2]+confint*reg25_plp5$cse[2]
-irf_low[[1,5]]=reg25_plp5$coefficients[2]-confint*reg25_plp5$cse[2]
-
-irf = list(irf_mean       = irf_mean,
-           irf_low    = irf_low,
-           irf_up     = irf_up)
-
-plot(irf$irf_low, type="n", ylim = c(-1, 1), xlim = c(1,5),
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5)
+plot(irf$irf_low, type="n", ylim = c(-1, 2), xlim = c(1,5),
+     ylab = "%", xlab = "Year",cex.axis=1.5,cex.lab=1.5)
 
 
 
