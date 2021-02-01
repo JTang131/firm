@@ -317,7 +317,11 @@ irf = list(irf_mean       = irf_mean,
            irf_up     = irf_up)
 
 plot(irf$irf_low, type="n", ylim = c(-1, 2), xlim = c(1,5),
+<<<<<<< HEAD
      ylab = "%", xlab = "year",cex.axis=1.5,cex.lab=1.5)
+=======
+     ylab = "Your label", xlab = "Another label",cex.axis=1.5,cex.lab=1.5)
+>>>>>>> bddc6557bfdea130192134ed09d668b6626a04ca
 
 
 
