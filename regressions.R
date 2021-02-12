@@ -6,6 +6,8 @@ library(ggplot2)
 library(pracma)
 library(stargazer)
 library(plm)
+library(fixest)
+library(data.table)
 
 #LP Horizon 1
 dat1 <- read.csv("E:/firm project/data/dat1.csv", header=FALSE)
@@ -13,8 +15,10 @@ dat1 <- read.csv("E:/firm project/data/dat1.csv", header=FALSE)
 attach(dat1)
 
 indyear=dat1$V3*10000+dat1$V4
+dat1$indyear=indyear
 reg1=felm(V1~V5+I(V5*V6)|indyear+V2|0|0,data = dat1)
 summary(reg1)
+r1=feols(V1~V5+I(V5*V6)|indyear+V2,data=dat1)
 
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
 attach(dat2)
@@ -30,13 +34,16 @@ summary(reg24)
 wage=dat2$V6/dat2$V8
 reg25=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = dat2)
 summary(reg25)
-
+dat2$indyear=indyear
+dat2$wage=wage
+r25=feols(V1~V5+I(wage*V5)+V8|indyear+V2,data=dat2)
+summary(r25,cluster=dat2$V2)
 
 # LP Horizon 2
 lp2 <- read.csv("E:/firm project/data/lp2.csv", header=FALSE)
 attach(lp2)
 indyear=lp2$V3*10000+lp2$V4
-reg1_lp2=felm(V1~V5+I(V5*V6)|indyear+V2|0|V2,data = lp2)
+reg1_lp2=felm(V1~V5+I(V5*V6)|indyear+V2|0|V3,data = lp2)
 summary(reg1_lp2)
 
 lp2r <- read.csv("E:/firm project/data/lp2r.csv", header=FALSE)
@@ -53,6 +60,10 @@ summary(reg24_lp2)
 wage=lp2r$V6/lp2r$V8
 reg25_lp2=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = lp2r)
 summary(reg25_lp2)
+lp2r$indyear=indyear
+lp2r$wage=wage
+r25_lp2=feols(V1~V5+I(wage*V5)+V8|indyear+V2,data=lp2r)
+summary(r25_lp2,cluster=lp2r$V2)
 
 # LP Horizon 3
 lp3 <- read.csv("E:/firm project/data/lp3.csv", header=FALSE)
@@ -75,6 +86,10 @@ summary(reg24_lp3)
 wage=lp3r$V6/lp3r$V8
 reg25_lp3=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = lp3r)
 summary(reg25_lp3)
+lp3r$indyear=indyear
+lp3r$wage=wage
+r25_lp3=feols(V1~V5+I(wage*V5)+V8|indyear+V2,data=lp3r)
+summary(r25_lp3,cluster=lp3r$V2)
 
 # LP Horizon 4
 lp4<- read.csv("E:/firm project/data/lp4.csv", header=FALSE)
@@ -97,6 +112,10 @@ summary(reg24_lp4)
 wage=lp4r$V6/lp4r$V8
 reg25_lp4=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = lp4r)
 summary(reg25_lp4)
+lp4r$indyear=indyear
+lp4r$wage=wage
+r25_lp4=feols(V1~V5+I(wage*V5)+V8|indyear+V2,data=lp4r)
+summary(r25_lp4,cluster=lp4r$V2)
 
 # LP Horizon 5
 lp5<- read.csv("E:/firm project/data/lp5.csv", header=FALSE)
@@ -119,6 +138,10 @@ summary(reg24_lp5)
 wage=lp5r$V6/lp5r$V8
 reg25_lp5=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = lp5r)
 summary(reg25_lp5)
+lp5r$indyear=indyear
+lp5r$wage=wage
+r25_lp5=feols(V1~V5+I(wage*V5)+V8|indyear+V2,data=lp5r)
+summary(r25_lp5)
 
 #LP Placebo H1
 pdat1 <- read.csv("E:/firm project/data/pdat1.csv", header=FALSE)
@@ -231,7 +254,7 @@ summary(reg23_plp5)
 reg24_plp5=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp5r)
 summary(reg24_plp5)
 wage=plp5r$V6/plp5r$V8
-reg25_plp5=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp5r)
+reg25_plp5=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V3,data = plp5r)
 summary(reg25_plp5)
 
 
@@ -317,11 +340,7 @@ irf = list(irf_mean       = irf_mean,
            irf_up     = irf_up)
 
 plot(irf$irf_low, type="n", ylim = c(-1, 2), xlim = c(1,5),
-<<<<<<< HEAD
      ylab = "%", xlab = "year",cex.axis=1.5,cex.lab=1.5)
-=======
-     ylab = "Your label", xlab = "Another label",cex.axis=1.5,cex.lab=1.5)
->>>>>>> bddc6557bfdea130192134ed09d668b6626a04ca
 
 
 
@@ -438,6 +457,47 @@ abline(h=0,lwd = 2)
 
 
 box(lwd=2)
+
+#prediction
+summary(r25)
+
+
+ 
+dat2=setDT(dat2)[, mzp0 := mean(V5), by = .(V3,V4)][]
+dzp=dat2$V5-dat2$mzp0
+dat2$dzp=dzp
+std0=aggregate(dat2$dzp,FUN=std,by=list(dat2$V4))
+
+
+z=predict(r25)
+zp1=z+dat2$V5
+year1=dat2$V4+1
+dat2$zp1=zp1
+dat2$year1=year1
+dat2=setDT(dat2)[,mzp1 := mean(zp1), by= .(V3,year1)][]
+dzp1=dat2$zp1-dat2$mzp1
+dat2$dzp1=dzp1
+std1=aggregate(dat2$dzp1,FUN=std,by=list(dat2$year1))
+
+lp2r=setDT(lp2r)[, mzp0 := mean(V5), by = .(V3,V4)][]
+dzp=lp2r$V5-lp2r$mzp0
+lp2r$dzp=dzp
+std0=aggregate(lp2r$V5,FUN=IQR,by=list(lp2r$V4))
+
+z=predict(r25_lp2)
+zp2=z+lp2r$V5
+year2=lp2r$V4+2
+lp2r$zp2=zp2
+lp2r$year2=year2
+lp2r=setDT(lp2r)[,mzp2 := mean(zp2), by= .(V3,year2)][]
+lp2r$dzp2=lp2r$zp2-lp2r$mzp2
+std2=aggregate(lp2r$zp2,FUN=IQR,by=list(lp2r$year2))
+
+
+par(mfrow=c(1,2))
+hist(dat2$dzp[dat2$V4==2014])
+hist(dat2$dzp1[dat2$year1==2015])
+
 
 
 #industry level regression
