@@ -36,8 +36,9 @@ reg25=felm(V1~V5+I(V11*V5)+V8|indyear+V2|0|V2,data = dat2)
 summary(reg25)
 dat2$indyear=indyear
 dat2$wage=wage
-r25=feols(V1~V5+I(V11*V5)+V8|indyear+V2,data=dat2)
+r25=feols(V1~V5+I(V11*V5)+V8+as.factor(indyear)|V2,data=dat2)
 summary(r25,cluster=dat2$V2)
+
 
 # LP Horizon 2
 lp2 <- read.csv("E:/firm project/data/lp2.csv", header=FALSE)
@@ -466,12 +467,16 @@ summary(r25)
 dat2=setDT(dat2)[, mzp0 := mean(V5), by = .(V3,V4)][]
 dzp=dat2$V5-dat2$mzp0
 dat2$dzp=dzp
-std0=aggregate(dat2$dzp,FUN=IQR,by=list(year=dat2$V4))
+std0=aggregate(dat2$dzp,FUN=std,by=list(year=dat2$V4))
 
 
 #z=predict(r25)
-b1=r25$coefficients[2]
-z=dat2$V5*dat2$V11*b1
+b1=r25$coefficients[1]
+b2=r25$coefficients[2]
+b3=r25$coefficients[3]
+fixedEffects=fixef(r25)
+z=dat2$V5*dat2$V11*b2
+#z=predict(r25)#-dat2$V5*b1-dat2$V8*b3
 zp1=z+dat2$V5
 year1=dat2$V4+1
 dat2$zp1=zp1
@@ -479,7 +484,7 @@ dat2$year1=year1
 dat2=setDT(dat2)[,mzp1 := mean(zp1), by= .(V3,year1)][]
 dzp1=dat2$zp1-dat2$mzp1
 dat2$dzp1=dzp1
-std1=aggregate(dat2$dzp1,FUN=IQR,by=list(year=dat2$year1))
+std1=aggregate(dat2$dzp1,FUN=std,by=list(year=dat2$year1))
 pred1=(std1[,2]-std0[,2])/std0[,2]
 real1=diff(std0[,2])/std0[c(1:34),2]
 
