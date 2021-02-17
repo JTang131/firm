@@ -35,6 +35,8 @@ summary(reg24)
 wage=dat2$V6/dat2$V8
 reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
+reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = dat2)
+summary(reg26)
 dat2$indyear=indyear
 dat2$wage=wage
 r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=dat2)
@@ -65,10 +67,12 @@ summary(reg24_lp2)
 wage=lp2r$V6/lp2r$V8
 reg25_lp2=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
 summary(reg25_lp2)
-#lp2r$indyear=indyear
-#lp2r$wage=wage
-#r25_lp2=feols(V1~V5+I(V11*V5)+V8|indyear+V2,data=lp2r)
-#summary(r25_lp2,cluster=lp2r$V2)
+reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = lp2r)
+summary(reg26_lp2)
+lp2r$indyear=indyear
+lp2r$wage=wage
+r25_lp2=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=lp2r)
+summary(r25_lp2,cluster=lp2r$V2)
 
 # LP Horizon 3
 lp3 <- read.csv("E:/firm project/data/lp3.csv", header=FALSE)
@@ -92,12 +96,12 @@ summary(reg24_lp3)
 wage=lp3r$V6/lp3r$V8
 reg25_lp3=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp3r)
 summary(reg25_lp3)
-reg26_lp3=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V2|0|V2,data = lp3r)
+reg26_lp3=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V2+V3|0|V2,data = lp3r)
 summary(reg26_lp3)
-#lp3r$indyear=indyear
+lp3r$indyear=indyear
 #lp3r$wage=wage
-#r25_lp3=feols(V1~V5+I(V11*V5)+V8|indyear+V2,data=lp3r)
-#summary(r25_lp3,cluster=lp3r$V2)
+r25_lp3=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=lp3r)
+summary(r25_lp3,cluster=lp3r$V2)
 
 # LP Horizon 4
 lp4<- read.csv("E:/firm project/data/lp4.csv", header=FALSE)
@@ -122,12 +126,12 @@ summary(reg24_lp4)
 wage=lp4r$V6/lp4r$V8
 reg25_lp4=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp4r)
 summary(reg25_lp4)
-reg26_lp4=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V2|0|V2,data = lp4r)
+reg26_lp4=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = lp4r)
 summary(reg26_lp4)
-#lp4r$indyear=indyear
+lp4r$indyear=indyear
 #lp4r$wage=wage
-#r25_lp4=feols(V1~V5+I(V11*V5)+V8|indyear+V2,data=lp4r)
-#summary(r25_lp4,cluster=lp4r$V2)
+r25_lp4=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=lp4r)
+summary(r25_lp4,cluster=lp4r$V2)
 
 # LP Horizon 5
 lp5<- read.csv("E:/firm project/data/lp5.csv", header=FALSE)
@@ -150,7 +154,7 @@ summary(reg24_lp5)
 wage=lp5r$V6/lp5r$V8
 reg25_lp5=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp5r)
 summary(reg25_lp5)
-reg26_lp5=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V2|0|V2,data = lp5r)
+reg26_lp5=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V2+V3|0|V2,data = lp5r)
 summary(reg26_lp5)
 lp5r$indyear=indyear
 lp5r$wage=wage
@@ -168,6 +172,7 @@ summary(preg1)
 
 pdat2 <- read.csv("E:/firm project/data/pdat2.csv", header=FALSE)
 attach(pdat2)
+pdat2=pdat2[pdat2$V4<2011,]
 indyear=pdat2$V3*10000+pdat2$V4
 preg21=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = pdat2)
 summary(preg21)
@@ -180,6 +185,8 @@ summary(preg24)
 wage=pdat2$V6/pdat2$V8
 preg25=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = pdat2)
 summary(preg25)
+preg26=felm(V1~V5+wage+I(wage*V5)+V8+V4|V3+V2|0|V2,data = pdat2)
+summary(preg26)
 
 #LP Placebo H2
 plp2 <- read.csv("E:/firm project/data/plp2.csv", header=FALSE)
@@ -190,6 +197,7 @@ summary(reg1_plp2)
 
 plp2r <- read.csv("E:/firm project/data/plp2r.csv", header=FALSE)
 attach(plp2r)
+plp2r=plp2r[plp2r$V4<2011,]
 indyear=plp2r$V3*10000+plp2r$V4
 reg21_plp2=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp2r)
 summary(reg21_plp2)
@@ -202,7 +210,8 @@ summary(reg24_plp2)
 wage=plp2r$V6/plp2r$V8
 reg25_plp2=felm(V1~V5+I(wage*V5)+V8|V2|0|V2,data = plp2r)
 summary(reg25_plp2)
-
+preg26_plp2=felm(V1~V5+wage+I(wage*V5)+V8+V4|V3+V2|0|V2,data = plp2r)
+summary(preg26_plp2)
 
 
 #LP Placebo H3
@@ -214,6 +223,7 @@ summary(reg1_plp3)
 
 plp3r <- read.csv("E:/firm project/data/plp3r.csv", header=FALSE)
 attach(plp3r)
+plp3r=plp3r[plp3r$V4<2011,]
 indyear=plp3r$V3*10000+plp3r$V4
 reg21_plp3=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp3r)
 summary(reg21_plp3)
@@ -226,6 +236,9 @@ summary(reg24_plp3)
 wage=plp3r$V6/plp3r$V8
 reg25_plp3=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp3r)
 summary(reg25_plp3)
+preg26_plp3=felm(V1~V5+wage+I(wage*V5)+V8+V4|V3+V2|0|V2,data = plp3r)
+summary(preg26_plp3)
+
 
 #LP Placebo H4
 plp4 <- read.csv("E:/firm project/data/plp4.csv", header=FALSE)
@@ -236,6 +249,7 @@ summary(reg1_plp4)
 
 plp4r <- read.csv("E:/firm project/data/plp4r.csv", header=FALSE)
 attach(plp4r)
+plp4r=plp4r[plp4r$V4<2011,]
 indyear=plp4r$V3*10000+plp4r$V4
 reg21_plp4=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp4r)
 summary(reg21_plp4)
@@ -248,6 +262,8 @@ summary(reg24_plp4)
 wage=plp4r$V6/plp4r$V8
 reg25_plp4=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp4r)
 summary(reg25_plp4)
+preg26_plp4=felm(V1~V5+wage+I(wage*V5)+V8+V4|V3+V2|0|V2,data = plp4r)
+summary(preg26_plp4)
 
 #LP Placebo H5
 plp5 <- read.csv("E:/firm project/data/plp5.csv", header=FALSE)
@@ -258,6 +274,7 @@ summary(reg1_plp5)
 
 plp5r <- read.csv("E:/firm project/data/plp5r.csv", header=FALSE)
 attach(plp5r)
+plp5r=plp5r[plp5r$V4<2011,]
 indyear=plp5r$V3*10000+plp5r$V4
 reg21_plp5=felm(V1~V5+V6+I(V5*V6)+V8+V10|indyear|0|V3,data = plp5r)
 summary(reg21_plp5)
@@ -270,7 +287,8 @@ summary(reg24_plp5)
 wage=plp5r$V6/plp5r$V8
 reg25_plp5=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp5r)
 summary(reg25_plp5)
-
+preg26_plp5=felm(V1~V5+wage+I(wage*V5)+V8+V4|V3+V2|0|V2,data = plp5r)
+summary(preg26_plp5)
 
 #irf
 irf_mean = matrix(NaN, 1, 5)
