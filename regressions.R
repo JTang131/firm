@@ -18,6 +18,8 @@ indyear=dat1$V3*10000+dat1$V4
 dat1$indyear=indyear
 reg1=felm(V1~V5+I(V5*V6)+V7+V8|indyear+V2|0|V2,data = dat1)
 summary(reg1)
+r10=felm(V1~V5+I(V5*V9)+V7+V8|indyear+V2|0|V2,data = dat1)
+summary(r10)
 r1=feols(V1~V5+I(V5*V6)|indyear+V2,data=dat1)
 
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
@@ -35,6 +37,8 @@ summary(reg24)
 wage=dat2$V6/dat2$V8
 reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
+reg20=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
+summary(reg20)
 reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = dat2)
 summary(reg26)
 dat2$indyear=indyear
@@ -50,6 +54,8 @@ attach(lp2)
 indyear=lp2$V3*10000+lp2$V4
 reg1_lp2=felm(V1~V5+I(V5*V6)+V7+V8|indyear+V2|0|V2,data = lp2)
 summary(reg1_lp2)
+r10_lp2=felm(V1~V5+I(V5*V9)+V7+V8|indyear+V2|0|V2,data = lp2)
+summary(r10_lp2)
 
 
 lp2r <- read.csv("E:/firm project/data/lp2r.csv", header=FALSE)
@@ -67,6 +73,8 @@ summary(reg24_lp2)
 wage=lp2r$V6/lp2r$V8
 reg25_lp2=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
 summary(reg25_lp2)
+reg20_lp2=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
+summary(reg20_lp2)
 reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = lp2r)
 summary(reg26_lp2)
 lp2r$indyear=indyear
