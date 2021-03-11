@@ -8,6 +8,9 @@ library(stargazer)
 library(plm)
 library(fixest)
 library(data.table)
+library(lme4)
+library(robustlmm)
+
 
 #LP Horizon 1
 dat1 <- read.csv("E:/firm project/data/dat1.csv", header=FALSE)
@@ -77,10 +80,27 @@ reg20_lp2=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
 summary(reg20_lp2)
 reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = lp2r)
 summary(reg26_lp2)
+
+lp2r$vt5=ave(lp2r$V5,lp2r$V4,FUN=mean)
+lp2r$vt8=ave(lp2r$V8,lp2r$V4,FUN=mean)
+lp2r$vt12=ave(lp2r$V12,lp2r$V4,FUN=mean)
+lp2r$vt13=ave(lp2r$V13,lp2r$V4,FUN=mean)
+Vd=dummy_cols(lp2r$V2,remove_selected_columns = TRUE)
+vtd=apply(Vd,2,function(x) ave(x,lp2r$V4,FUN=mean))
+Vd=as.matrix(Vd,sparse=TRUE)
+vtd=as.matrix(vtd,sparse=TRUE)
+
+
+reg27_lp2=plm(V1~V5+V11+V8+V12+V13+Vd+vt5+vt8+vt12+vt13+vtd,data = lp2r,model = "random",index = c("V2","V4"))
+summary(reg27_lp2)
+coeftest(reg27_lp2, vcovHC(reg27_lp2, type = "HC3"))
+
 lp2r$indyear=indyear
 lp2r$wage=wage
 r25_lp2=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=lp2r)
 summary(r25_lp2,cluster=lp2r$V2)
+
+
 
 # LP Horizon 3
 lp3 <- read.csv("E:/firm project/data/lp3.csv", header=FALSE)
