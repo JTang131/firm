@@ -5,11 +5,10 @@ library(plm)
 library(ggplot2)
 library(pracma)
 library(stargazer)
-library(plm)
 library(fixest)
 library(data.table)
 library(lme4)
-library(robustlmm)
+
 
 
 #LP Horizon 1
@@ -49,6 +48,12 @@ dat2$wage=wage
 r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=dat2)
 summary(r25,cluster=dat2$V2)
 
+v2=unique(dat2$V2)
+dat2=dat2[(dat2$V2 %in% v2[which(tapply(dat2$V2,dat2$V2,length)>10)]),]
+
+reg27=pmg(V1~V5+V11+V8+V12+V13,dat2,model = "mg",index = c("V2","V4"))
+summary(reg27)
+
 
 # LP Horizon 2
 lp2 <- read.csv("E:/firm project/data/lp2.csv", header=FALSE)
@@ -81,19 +86,13 @@ summary(reg20_lp2)
 reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = lp2r)
 summary(reg26_lp2)
 
-lp2r$vt5=ave(lp2r$V5,lp2r$V4,FUN=mean)
-lp2r$vt8=ave(lp2r$V8,lp2r$V4,FUN=mean)
-lp2r$vt12=ave(lp2r$V12,lp2r$V4,FUN=mean)
-lp2r$vt13=ave(lp2r$V13,lp2r$V4,FUN=mean)
-Vd=dummy_cols(lp2r$V2,remove_selected_columns = TRUE)
-vtd=apply(Vd,2,function(x) ave(x,lp2r$V4,FUN=mean))
-Vd=as.matrix(Vd,sparse=TRUE)
-vtd=as.matrix(vtd,sparse=TRUE)
 
+v2=unique(lp2r$V2)
+lp2r=lp2r[(lp2r$V2 %in% v2[which(tapply(lp2r$V2,lp2r$V2,length)>10)]),]
 
-reg27_lp2=plm(V1~V5+V11+V8+V12+V13+Vd+vt5+vt8+vt12+vt13+vtd,data = lp2r,model = "random",index = c("V2","V4"))
+reg27_lp2=pmg(V1~V5+V11+V8+V12+V13,lp2r,model = "mg",index = c("V2","V4"))
 summary(reg27_lp2)
-coeftest(reg27_lp2, vcovHC(reg27_lp2, type = "HC3"))
+
 
 lp2r$indyear=indyear
 lp2r$wage=wage
@@ -131,6 +130,12 @@ lp3r$indyear=indyear
 r25_lp3=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=lp3r)
 summary(r25_lp3,cluster=lp3r$V2)
 
+v2=unique(lp3r$V2)
+lp3r=lp3r[(lp3r$V2 %in% v2[which(tapply(lp3r$V2,lp3r$V2,length)>10)]),]
+
+reg27_lp3=pmg(V1~V5+V11+V8+V12+V13,lp3r,model = "mg",index = c("V2","V4"))
+summary(reg27_lp3)
+
 # LP Horizon 4
 lp4<- read.csv("E:/firm project/data/lp4.csv", header=FALSE)
 attach(lp4)
@@ -161,6 +166,13 @@ lp4r$indyear=indyear
 r25_lp4=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=lp4r)
 summary(r25_lp4,cluster=lp4r$V2)
 
+v2=unique(lp4r$V2)
+lp4r=lp4r[(lp4r$V2 %in% v2[which(tapply(lp4r$V2,lp4r$V2,length)>10)]),]
+
+reg27_lp4=pmg(V1~V5+V11+V8+V12+V13,lp4r,model = "mg",index = c("V2","V4"))
+summary(reg27_lp4)
+
+
 # LP Horizon 5
 lp5<- read.csv("E:/firm project/data/lp5.csv", header=FALSE)
 attach(lp5)
@@ -188,6 +200,13 @@ lp5r$indyear=indyear
 lp5r$wage=wage
 r25_lp5=feols(V1~V5+I(V11*V5)+V8|indyear+V2,data=lp5r)
 summary(r25_lp5,cluster=lp5r$V2)
+
+v2=unique(lp5r$V2)
+lp5r=lp5r[(lp5r$V2 %in% v2[which(tapply(lp5r$V2,lp5r$V2,length)>10)]),]
+
+reg27_lp5=pmg(V1~V5+V11+V8+V12+V13,lp5r,model = "mg",index = c("V2","V4"))
+summary(reg27_lp5)
+
 
 #LP Placebo H1
 pdat1 <- read.csv("E:/firm project/data/pdat1.csv", header=FALSE)
