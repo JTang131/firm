@@ -58,11 +58,11 @@ summary(reg27)
 # LP Horizon 2
 lp2 <- read.csv("E:/firm project/data/lp2.csv", header=FALSE)
 attach(lp2)
-#lp2=lp2[lp2$V4<2008]
+lp2=lp2[lp2$V4<2011,]
 indyear=lp2$V3*10000+lp2$V4
 reg1_lp2=felm(V1~V5+I(V5*V6)+V7+V8|indyear+V2|0|V2,data = lp2)
 summary(reg1_lp2)
-r10_lp2=felm(V1~V5+I(V5*V9)+V7+V8|indyear+V2|0|V2,data = lp2)
+r10_lp2=plm(V1~V5+I(V5*V6)+V7+V8,data = lp2,index=c("V2","V4"),model = "within",effect="twoways")
 summary(r10_lp2)
 
 
@@ -70,7 +70,7 @@ lp2r <- read.csv("E:/firm project/data/lp2r.csv", header=FALSE)
 attach(lp2r)
 lp2r=lp2r[lp2r$V4<2011,]
 indyear=lp2r$V3*10000+lp2r$V4
-reg21_lp2=felm(V1~V5+V6+I(V5*V6)+V8+V10+V12+V13|indyear|0|V2,data = lp2r)
+reg21_lp2=felm(V1~V5+V6+I(V5*V6)+V8+V12+V13+V10|indyear|0|V2,data = lp2r)
 summary(reg21_lp2)
 reg22_lp2=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp2r)
 summary(reg22_lp2)
@@ -83,7 +83,7 @@ reg25_lp2=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
 summary(reg25_lp2)
 reg20_lp2=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
 summary(reg20_lp2)
-reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+V4|V3+V2|0|V2,data = lp2r)
+reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = lp2r)
 summary(reg26_lp2)
 
 
@@ -540,8 +540,9 @@ box(lwd=2)
 #prediction
 #for dat1
 
-dat1=setDT(dat1)[, mzp0 := mean(V5), by = .(V3,V4)][]
-dzp=dat1$V5-dat1$mzp0
+dat1$zp0=dat1$V5+dat1$V1
+dat1=setDT(dat1)[, mzp0 := mean(zp0), by = .(V3,V4)][]
+dzp=dat1$zp0-dat1$mzp0
 dat1$dzp=dzp
 std0=aggregate(dat1$dzp,FUN=std,by=list(year=dat1$V4))
 
@@ -577,6 +578,10 @@ dzp=dat2$V5-dat2$mzp0
 dat2$dzp=dzp
 std0=aggregate(dat2$dzp,FUN=std,by=list(year=dat2$V4))
 
+dat2$zp0=dat2$V5+dat2$V1
+dat2=setDT(dat2)[, mzp00 := mean(zp0), by = .(V3,V4)][]
+dat2$dzp1=dat2$zp0-dat2$mzp00
+pstd0=aggregate(dat2$dzp1,FUN=std,by=list(year=dat2$V4))
 
 #z=predict(r25)
 b1=r25$coefficients[1]
@@ -601,15 +606,20 @@ dzp1=dat2$zp1-dat2$mzp1
 dat2$dzp1=dzp1
 std1=aggregate(dat2$dzp1,FUN=std,by=list(year=dat2$year1))
 pred1=(std1[,2]-std0[,2])/std0[,2]
-real1=diff(std0[,2])/std0[c(1:length(std0)-1),2]
+real1=(pstd0[,2]-std0[,2])/std0[,2]
 
 #LP2
-lp2r=setDT(lp2r)[, mzp0 := mean(V5), by = .(V3,V4)][]
+lp2r=setDT(lp2r)[, mzp0 := mean(V5), by = .(V3,V4)]
 dzp=lp2r$V5-lp2r$mzp0
 lp2r$dzp=dzp
 std0=aggregate(lp2r$dzp,FUN=std,by=list(lp2r$V4))
 
-b1=r25_lp2$coefficients[2]
+lp2r$zp0=lp2r$V5+lp2r$V1
+lp2r=setDT(lp2r)[, mzp00 := mean(zp0), by = .(V3,V4)][]
+lp2r$dzp1=lp2r$zp0-lp2r$mzp00
+pstd2=aggregate(lp2r$dzp1,FUN=std,by=list(year=lp2r$V4))
+
+b1=reg25_lp2$coefficients[2]
 z=lp2r$V5*lp2r$V11*b1
 zp2=z+lp2r$V5
 year2=lp2r$V4+2
@@ -619,13 +629,18 @@ lp2r=setDT(lp2r)[,mzp2 := mean(zp2), by= .(V3,year2)][]
 lp2r$dzp2=lp2r$zp2-lp2r$mzp2
 std2=aggregate(lp2r$dzp2,FUN=std,by=list(lp2r$year2))
 pred2=(std2[,2]-std0[,2])/std0[,2]
-real2=diff(std0[,2],lag=2)/std0[c(1:length(std0)-1),2]
+real2=(pstd2[,2]-std0[,2])/std0[,2]
 
 #LP3
 lp3r=setDT(lp3r)[, mzp0 := mean(V5), by = .(V3,V4)][]
 dzp=lp3r$V5-lp3r$mzp0
 lp3r$dzp=dzp
 std0=aggregate(lp3r$dzp,FUN=std,by=list(lp3r$V4))
+
+lp3r$zp0=lp3r$V5+lp3r$V1
+lp3r=setDT(lp3r)[, mzp00 := mean(zp0), by = .(V3,V4)][]
+lp3r$dzp1=lp3r$zp0-lp3r$mzp00
+pstd3=aggregate(lp3r$dzp1,FUN=std,by=list(year=lp3r$V4))
 
 b1=r25_lp3$coefficients[2]
 z=lp3r$V5*lp3r$V11*b1
@@ -637,7 +652,7 @@ lp3r=setDT(lp3r)[,mzp3 := mean(zp3), by= .(V3,year3)][]
 lp3r$dzp3=lp3r$zp3-lp3r$mzp3
 std3=aggregate(lp3r$dzp3,FUN=std,by=list(lp3r$year3))
 pred3=(std3[,2]-std0[,2])/std0[,2]
-real3=diff(std0[,2],lag=3)/std0[c(1:30),2]
+real3=(pstd3[,2]-std0[,2])/std0[,2]
 
 #LP4
 lp4r=setDT(lp4r)[, mzp0 := mean(V5), by = .(V3,V4)][]
