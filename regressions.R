@@ -27,6 +27,7 @@ r1=feols(V1~V5+I(V5*V6)|indyear+V2,data=dat1)
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
 attach(dat2)
 dat2=dat2[dat2$V4<2011,]
+lp2r=lp2r[lp2r$V10<1981,]
 indyear=dat2$V3*10000+dat2$V4
 reg21=felm(V1~V5+V6+I(V5*V6)+V8+V10+V12+V13|indyear|0|V2,data = dat2)
 summary(reg21)
@@ -39,14 +40,15 @@ summary(reg24)
 wage=dat2$V6/dat2$V8
 reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
-reg20=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
-summary(reg20)
 reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = dat2)
 summary(reg26)
 dat2$indyear=indyear
 dat2$wage=wage
 r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=dat2)
 summary(r25,cluster=dat2$V2)
+#level which makes no sense
+reg20=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
+summary(reg20)
 
 v2=unique(dat2$V2)
 dat2=dat2[(dat2$V2 %in% v2[which(tapply(dat2$V2,dat2$V2,length)>10)]),]
@@ -69,6 +71,7 @@ summary(r10_lp2)
 lp2r <- read.csv("E:/firm project/data/lp2r.csv", header=FALSE)
 attach(lp2r)
 lp2r=lp2r[lp2r$V4<2011,]
+lp2r=lp2r[lp2r$V10<1991,]
 indyear=lp2r$V3*10000+lp2r$V4
 reg21_lp2=felm(V1~V5+V6+I(V5*V6)+V8+V12+V13+V10|indyear|0|V2,data = lp2r)
 summary(reg21_lp2)
