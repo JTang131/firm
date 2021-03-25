@@ -27,7 +27,7 @@ r1=feols(V1~V5+I(V5*V6)|indyear+V2,data=dat1)
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
 attach(dat2)
 dat2=dat2[dat2$V4<2011,]
-lp2r=lp2r[lp2r$V10<1981,]
+#lp2r=lp2r[lp2r$V10<1981,]
 indyear=dat2$V3*10000+dat2$V4
 reg21=felm(V1~V5+V6+I(V5*V6)+V8+V10+V12+V13|indyear|0|V2,data = dat2)
 summary(reg21)
@@ -38,13 +38,13 @@ summary(reg23)
 reg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = dat2)
 summary(reg24)
 wage=dat2$V6/dat2$V8
-reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
+reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|V4+V2|0|V2,data = dat2)
 summary(reg25)
 reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = dat2)
 summary(reg26)
 dat2$indyear=indyear
 dat2$wage=wage
-r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=dat2)
+r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|V4+V2,data=dat2)
 summary(r25,cluster=dat2$V2)
 #level which makes no sense
 reg20=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
@@ -55,6 +55,27 @@ dat2=dat2[(dat2$V2 %in% v2[which(tapply(dat2$V2,dat2$V2,length)>10)]),]
 
 reg27=pmg(V1~V5+V11+V8+V12+V13,dat2,model = "mg",index = c("V2","V4"))
 summary(reg27)
+
+fe=getfe(reg25)
+options(warn=2)
+fes=c(1:length(dat2$V2))
+i=1
+for (x in dat2$V2){
+  fes[i]=fe$effect[fe$fe=="V2" & fe$idx==x]
+  i=i+1
+}
+pzp=predict(r25)+dat2$V5
+azp=dat2$V5+dat2$V1
+pds=aggregate(pzp,FUN=sd,by=list(year=dat2$V4))
+ads=aggregate(azp,FUN=sd,by=list(year=dat2$V4))
+plot(ads,type="l",ylim=c(0.3,1.5))
+lines(pds)
+newd2=dat2
+newd2[,"V11"]=0
+pzp=predict(r25,newdata=newd2)+dat2$V5
+pds=aggregate(pzp,FUN=std,by=list(year=dat2$V4))
+lines(pds) 
+
 
 
 # LP Horizon 2
@@ -71,7 +92,7 @@ summary(r10_lp2)
 lp2r <- read.csv("E:/firm project/data/lp2r.csv", header=FALSE)
 attach(lp2r)
 lp2r=lp2r[lp2r$V4<2011,]
-lp2r=lp2r[lp2r$V10<1991,]
+#lp2r=lp2r[lp2r$V10<1991,]
 indyear=lp2r$V3*10000+lp2r$V4
 reg21_lp2=felm(V1~V5+V6+I(V5*V6)+V8+V12+V13+V10|indyear|0|V2,data = lp2r)
 summary(reg21_lp2)
@@ -82,7 +103,7 @@ summary(reg23_lp2)
 reg24_lp2=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V3,data = lp2r)
 summary(reg24_lp2)
 wage=lp2r$V6/lp2r$V8
-reg25_lp2=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
+reg25_lp2=felm(V1~V5+I(V11*V5)+V8+V12+V13|V4+V2|0|V2,data = lp2r)
 summary(reg25_lp2)
 reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = lp2r)
 summary(reg26_lp2)
@@ -101,9 +122,29 @@ summary(reg27_lp2)
 
 lp2r$indyear=indyear
 lp2r$wage=wage
-r25_lp2=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=lp2r)
+r25_lp2=feols(V1~V5+I(V11*V5)+V8+V12+V13|V4+V2,data=lp2r)
 summary(r25_lp2,cluster=lp2r$V2)
 
+
+fe=getfe(reg25_lp2)
+options(warn=2)
+fes=c(1:length(lp2r$V2))
+i=1
+for (x in lp2r$V2){
+  fes[i]=fe$effect[fe$fe=="V2" & fe$idx==x]
+  i=i+1
+}
+pzp=predict(r25_lp2)+lp2r$V5-fes
+azp=lp2r$V5+lp2r$V1
+pds=aggregate(pzp,FUN=std,by=list(year=lp2r$V4))
+ads=aggregate(azp,FUN=std,by=list(year=lp2r$V4))
+plot(ads,type="l",ylim=c(0.3,1.5))
+lines(pds)
+newd2=lp2r
+newd2[,c("V8","V12","V13")]=0
+pzp1=predict(r25_lp2,newdata=newd2)+lp2r$V5
+pds1=aggregate(pzp1,FUN=std,by=list(year=lp2r$V4))
+lines(pds1)
 
 
 # LP Horizon 3
@@ -623,7 +664,7 @@ lp2r=lp2r %>%
 
 dzp=lp2r$V5-lp2r$mzp0
 lp2r$dzp=dzp
-std0=aggregate(lp2r$dzp,FUN=std,by=list(lp2r$V4))
+std0=aggregate(lp2r$dzp,FUN=IQR,by=list(lp2r$V4))
 
 year2=lp2r$V4+2
 lp2r$year2=year2
@@ -636,7 +677,7 @@ lp2r=lp2r %>%
 
 #lp2r=setDT(lp2r)[, mzp00 := mean(lp2r$zp0), by = .(V3,year2)]
 lp2r$dzp1=lp2r$zp0-lp2r$mzp00
-pstd2=aggregate(lp2r$dzp1,FUN=std,by=list(year=lp2r$year2))
+pstd2=aggregate(lp2r$dzp1,FUN=IQR,by=list(year=lp2r$year2))
 
 b1=reg25_lp2$coefficients[2]
 z=lp2r$V5*lp2r$V11*b1
@@ -650,7 +691,7 @@ lp2r=lp2r %>%
   left_join(mzp2)
 #lp2r=setDT(lp2r)[,mzp2 := mean(lp2r$zp2), by= .(lp2r$V3,lp2r$year2)][]
 lp2r$dzp2=lp2r$zp2-lp2r$mzp2
-std2=aggregate(lp2r$dzp2,FUN=std,by=list(lp2r$year2))
+std2=aggregate(lp2r$dzp2,FUN=IQR,by=list(lp2r$year2))
 pred2=(std2[,2]-std0[,2])/std0[,2]
 real2=(pstd2[,2]-std0[,2])/std0[,2]
 mean(pred2)
