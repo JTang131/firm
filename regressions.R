@@ -76,7 +76,14 @@ pzp=predict(r25,newdata=newd2)+dat2$V5
 pds=aggregate(pzp,FUN=std,by=list(year=dat2$V4))
 lines(pds) 
 
-
+v11=sum(unique(dat2$V11))
+f80=dat2$V5[dat2$V4==1982]
+pf80=f80*v11*r25$coefficients[2]
+f10=dat2$V5[dat2$V4==2010 & dat2$V10<1981]
+pf10=f10+dat2$V1[dat2$V4==2010 & dat2$V10<1981]
+sd(pf80)
+sd(pf10)
+sd(f80)
 
 # LP Horizon 2
 lp2 <- read.csv("E:/firm project/data/lp2.csv", header=FALSE)
