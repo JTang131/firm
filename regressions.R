@@ -44,7 +44,7 @@ reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = dat2)
 summary(reg26)
 dat2$indyear=indyear
 dat2$wage=wage
-r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|V4+V2,data=dat2)
+r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=dat2)
 summary(r25,cluster=dat2$V2)
 #level which makes no sense
 reg20=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
@@ -64,6 +64,43 @@ for (x in dat2$V2){
   fes[i]=fe$effect[fe$fe=="V2" & fe$idx==x]
   i=i+1
 }
+feindy=c(1:length(dat2$indyear))
+i=1
+for (x in dat2$indyear){
+  feindy[i]=fe$effect[fe$idx==x]
+  i=i+1
+}
+dat2$fes=fes
+dat2$feindy=feindy
+wage=unique(dat2$V11)
+
+dat2_80 <- dat2%>%
+  filter(V4=="1980")
+
+#wage=wage[-1]
+
+asd=c(1:(length(wage)))
+for (i in c(1:length(wage))){
+  asd[i]=sd(dat2_80$V5)
+  pdzp=reg25$coefficients[2]*dat2_80$V5*wage[i]
+  dat2_80$V5=dat2_80$V5+pdzp
+}
+
+dat2_80 <- dat2%>%
+  filter(V4=="1980")
+
+psd=c(1:(length(wage)))
+for (i in c(1:length(wage))){
+  psd[i]=sd(dat2_80$V5)
+  pdzp=reg25$coefficients[1]*dat2_80$V5+
+    dat2_80$fes
+  dat2_80$V5=dat2_80$V5+pdzp
+}
+
+plot(asd,type = 'l')
+lines(psd)
+
+#predict using full sample
 pzp=predict(r25)+dat2$V5
 azp=dat2$V5+dat2$V1
 pds=aggregate(pzp,FUN=sd,by=list(year=dat2$V4))
