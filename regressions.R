@@ -77,12 +77,13 @@ wage=unique(dat2$V11)
 dat2_80 <- dat2%>%
   filter(V4=="1980")
 
-#wage=wage[-1]
+wage=wage[-1]
 
 asd=c(1:(length(wage)))
 for (i in c(1:length(wage))){
-  asd[i]=sd(dat2_80$V5)
-  pdzp=reg25$coefficients[2]*dat2_80$V5*wage[i]
+  asd[i]=IQR(dat2_80$V5)
+  pdzp=reg25$coefficients[1]*dat2_80$V5+reg25$coefficients[2]*dat2_80$V5*wage[i]+
+   dat2_80$fes
   dat2_80$V5=dat2_80$V5+pdzp
 }
 
@@ -91,7 +92,7 @@ dat2_80 <- dat2%>%
 
 psd=c(1:(length(wage)))
 for (i in c(1:length(wage))){
-  psd[i]=sd(dat2_80$V5)
+  psd[i]=IQR(dat2_80$V5)
   pdzp=reg25$coefficients[1]*dat2_80$V5+
     dat2_80$fes
   dat2_80$V5=dat2_80$V5+pdzp
