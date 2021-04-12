@@ -9,6 +9,7 @@ library(fixest)
 library(data.table)
 library(lme4)
 library(dplyr)
+library(latex2exp)
 
 
 #LP Horizon 1
@@ -38,7 +39,7 @@ summary(reg23)
 reg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = dat2)
 summary(reg24)
 wage=dat2$V6/dat2$V8
-reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|V4+V2|0|V2,data = dat2)
+reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
 reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = dat2)
 summary(reg26)
@@ -81,7 +82,7 @@ wage=wage[-1]
 
 asd=c(1:(length(wage)))
 for (i in c(1:length(wage))){
-  asd[i]=IQR(dat2_80$V5)
+  asd[i]=sd(dat2_80$V5)
   pdzp=reg25$coefficients[1]*dat2_80$V5+reg25$coefficients[2]*dat2_80$V5*wage[i]+
    dat2_80$fes
   dat2_80$V5=dat2_80$V5+pdzp
@@ -89,10 +90,12 @@ for (i in c(1:length(wage))){
 
 dat2_80 <- dat2%>%
   filter(V4=="1980")
+mean(dat2_80$V1[which(abs(dat2_80$V5-mean(dat2_80$V5))<0.01)])
+
 
 psd=c(1:(length(wage)))
 for (i in c(1:length(wage))){
-  psd[i]=IQR(dat2_80$V5)
+  psd[i]=sd(dat2_80$V5)
   pdzp=reg25$coefficients[1]*dat2_80$V5+
     dat2_80$fes
   dat2_80$V5=dat2_80$V5+pdzp
@@ -346,7 +349,7 @@ summary(reg23_plp2)
 reg24_plp2=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = plp2r)
 summary(reg24_plp2)
 wage=plp2r$V6/plp2r$V8
-reg25_plp2=felm(V1~V5+I(wage*V5)+V8|V2|0|V2,data = plp2r)
+reg25_plp2=felm(V1~V5+I(wage*V5)+V8|indyear+V2|0|V2,data = plp2r)
 summary(reg25_plp2)
 preg26_plp2=felm(V1~V5+wage+I(wage*V5)+V8+V4|V3+V2|0|V2,data = plp2r)
 summary(preg26_plp2)
@@ -479,53 +482,49 @@ box(lwd=2)
 
 #not rnd adjusted
 
-irf_mean = matrix(NaN, 1, 5)
-irf_up = matrix(NaN, 1, 5)
-irf_low = matrix(NaN, 1, 5)
+irf_mean = c(1:5)*NaN
+irf_up = c(1:5)*NaN
+irf_low = c(1:5)*NaN
 
 confint=1.96
-irf_mean[[1,1]]=reg25$coefficients[2]
-irf_up[[1,1]]=reg25$coefficients[2]+confint*reg25$cse[2]
-irf_low[[1,1]]=reg25$coefficients[2]-confint*reg25$cse[2]
+irf_mean[1]=reg25$coefficients[2]
+irf_up[1]=reg25$coefficients[2]+confint*reg25$cse[2]
+irf_low[1]=reg25$coefficients[2]-confint*reg25$cse[2]
 
-irf_mean[[1,2]]=reg25_lp2$coefficients[2]
-irf_up[[1,2]]=reg25_lp2$coefficients[2]+confint*reg25_lp2$cse[2]
-irf_low[[1,2]]=reg25_lp2$coefficients[2]-confint*reg25_lp2$cse[2]
+irf_mean[2]=reg25_lp2$coefficients[2]
+irf_up[2]=reg25_lp2$coefficients[2]+confint*reg25_lp2$cse[2]
+irf_low[2]=reg25_lp2$coefficients[2]-confint*reg25_lp2$cse[2]
 
-irf_mean[[1,3]]=reg25_lp3$coefficients[2]
-irf_up[[1,3]]=reg25_lp3$coefficients[2]+confint*reg25_lp3$cse[2]
-irf_low[[1,3]]=reg25_lp3$coefficients[2]-confint*reg25_lp3$cse[2]
+irf_mean[3]=reg25_lp3$coefficients[2]
+irf_up[3]=reg25_lp3$coefficients[2]+confint*reg25_lp3$cse[2]
+irf_low[3]=reg25_lp3$coefficients[2]-confint*reg25_lp3$cse[2]
 
-irf_mean[[1,4]]=reg25_lp4$coefficients[2]
-irf_up[[1,4]]=reg25_lp4$coefficients[2]+confint*reg25_lp4$cse[2]
-irf_low[[1,4]]=reg25_lp4$coefficients[2]-confint*reg25_lp4$cse[2]
+irf_mean[4]=reg25_lp4$coefficients[2]
+irf_up[4]=reg25_lp4$coefficients[2]+confint*reg25_lp4$cse[2]
+irf_low[4]=reg25_lp4$coefficients[2]-confint*reg25_lp4$cse[2]
 
 
-irf_mean[[1,5]]=reg25_lp5$coefficients[2]
-irf_up[[1,5]]=reg25_lp5$coefficients[2]+confint*reg25_lp5$cse[2]
-irf_low[[1,5]]=reg25_lp5$coefficients[2]-confint*reg25_lp5$cse[2]
-
-irf = list(irf_mean       = irf_mean,
-           irf_low    = irf_low,
-           irf_up     = irf_up)
-
-plot(irf$irf_low, type="n", ylim = c(-1, 2), xlim = c(1,5),
-     ylab = "%", xlab = "year",cex.axis=1.5,cex.lab=1.5)
+irf_mean[5]=reg25_lp5$coefficients[2]
+irf_up[5]=reg25_lp5$coefficients[2]+confint*reg25_lp5$cse[2]
+irf_low[5]=reg25_lp5$coefficients[2]-confint*reg25_lp5$cse[2]
 
 
 
-# draw the filled polygon for confidence intervals
-polygon(
-  c(1:length(irf$irf_low), length(irf$irf_low):1),
-  c(irf$irf_up, rev(irf$irf_low)), 
-  col = "grey80", border = NA)
 
-# add coefficient estimate line
-lines(1:5,irf$irf_mean, col = "red",lwd = 4)
-abline(h=0,lwd = 2)
+irf = tibble(irf_mean,irf_low,irf_up)
+irf=irf %>% 
+  mutate(horizon=c(1:5))
 
+irf$horizon=factor(irf$horizon)
 
-box(lwd=2)
+ggplot(irf)+
+  geom_errorbar(aes(ymin=irf_low,ymax=irf_up, x=horizon),
+                stat="identity",width = 0.3,size=2)+
+  ylim(-1.5, 2)+
+  geom_point(aes(y=irf_mean,x=horizon),shape=3, size=6, fill="black",stroke = 2)+
+  geom_hline(yintercept=0,linetype="dashed", color = "red",size=1)+
+  theme_classic(base_size = 30)+
+  ylab(TeX("$\\gamma^h$"))
 
 
 #placebo
@@ -580,53 +579,46 @@ box(lwd=2)
 
 #not rnd adjusted
 
-irf_mean = matrix(NaN, 1, 5)
-irf_up = matrix(NaN, 1, 5)
-irf_low = matrix(NaN, 1, 5)
+irf_mean = c(1:5)*NaN
+irf_up = c(1:5)*NaN
+irf_low = c(1:5)*NaN
 
 confint=1.96
-irf_mean[[1,1]]=preg25$coefficients[2]
-irf_up[[1,1]]=preg25$coefficients[2]+confint*preg25$cse[2]
-irf_low[[1,1]]=preg25$coefficients[2]-confint*preg25$cse[2]
+irf_mean[1]=preg25$coefficients[2]
+irf_up[1]=preg25$coefficients[2]+confint*preg25$cse[2]
+irf_low[1]=preg25$coefficients[2]-confint*preg25$cse[2]
 
-irf_mean[[1,2]]=reg25_plp2$coefficients[2]
-irf_up[[1,2]]=reg25_plp2$coefficients[2]+confint*reg25_plp2$cse[2]
-irf_low[[1,2]]=reg25_plp2$coefficients[2]-confint*reg25_plp2$cse[2]
+irf_mean[2]=reg25_plp2$coefficients[2]
+irf_up[2]=reg25_plp2$coefficients[2]+confint*reg25_plp2$cse[2]
+irf_low[2]=reg25_plp2$coefficients[2]-confint*reg25_plp2$cse[2]
 
-irf_mean[[1,3]]=reg25_plp3$coefficients[2]
-irf_up[[1,3]]=reg25_plp3$coefficients[2]+confint*reg25_plp3$cse[2]
-irf_low[[1,3]]=reg25_plp3$coefficients[2]-confint*reg25_plp3$cse[2]
+irf_mean[3]=reg25_plp3$coefficients[2]
+irf_up[3]=reg25_plp3$coefficients[2]+confint*reg25_plp3$cse[2]
+irf_low[3]=reg25_plp3$coefficients[2]-confint*reg25_plp3$cse[2]
 
-irf_mean[[1,4]]=reg25_plp4$coefficients[2]
-irf_up[[1,4]]=reg25_plp4$coefficients[2]+confint*reg25_plp4$cse[2]
-irf_low[[1,4]]=reg25_plp4$coefficients[2]-confint*reg25_plp4$cse[2]
-
-
-irf_mean[[1,5]]=reg25_plp5$coefficients[2]
-irf_up[[1,5]]=reg25_plp5$coefficients[2]+confint*reg25_plp5$cse[2]
-irf_low[[1,5]]=reg25_plp5$coefficients[2]-confint*reg25_plp5$cse[2]
-
-irf = list(irf_mean       = irf_mean,
-           irf_low    = irf_low,
-           irf_up     = irf_up)
-
-plot(irf$irf_low, type="n", ylim = c(-1, 2), xlim = c(1,5),
-     ylab = "%", xlab = "Year",cex.axis=1.5,cex.lab=1.5)
+irf_mean[4]=reg25_plp4$coefficients[2]
+irf_up[4]=reg25_plp4$coefficients[2]+confint*reg25_plp4$cse[2]
+irf_low[4]=reg25_plp4$coefficients[2]-confint*reg25_plp4$cse[2]
 
 
+irf_mean[5]=reg25_plp5$coefficients[2]
+irf_up[5]=reg25_plp5$coefficients[2]+confint*reg25_plp5$cse[2]
+irf_low[5]=reg25_plp5$coefficients[2]-confint*reg25_plp5$cse[2]
 
-# draw the filled polygon for confidence intervals
-polygon(
-  c(1:length(irf$irf_low), length(irf$irf_low):1),
-  c(irf$irf_up, rev(irf$irf_low)), 
-  col = "grey80", border = NA)
+irf = tibble(irf_mean,irf_low,irf_up)
+irf=irf %>% 
+  mutate(horizon=c(1:5))
 
-# add coefficient estimate line
-lines(1:5,irf$irf_mean, col = "red",lwd = 4)
-abline(h=0,lwd = 2)
+irf$horizon=factor(irf$horizon)
 
-
-box(lwd=2)
+ggplot(irf)+
+  geom_errorbar(aes(ymin=irf_low,ymax=irf_up, x=horizon),
+                stat="identity",width = 0.3,size=2)+
+  ylim(-1.5, 2)+
+  geom_point(aes(y=irf_mean,x=horizon),shape=3, size=6, fill="black",stroke = 2)+
+  geom_hline(yintercept=0,linetype="dashed", color = "red",size=1)+
+  theme_classic(base_size = 30)+
+  ylab(TeX("$\\gamma^h$"))
 
 #prediction
 #for dat1
@@ -668,6 +660,7 @@ dat2=setDT(dat2)[, mzp0 := mean(V5), by = .(V3,V4)][]
 dzp=dat2$V5-dat2$mzp0
 dat2$dzp=dzp
 std0=aggregate(dat2$dzp,FUN=std,by=list(year=dat2$V4))
+m0=aggregate(dat2$V5,FUN=mean,by=list(year=dat2$V4))
 
 dat2$zp0=dat2$V5+dat2$V1
 dat2=setDT(dat2)[, mzp00 := mean(dat2$zp0), by = .(V3,V4)][]
@@ -709,7 +702,7 @@ lp2r=lp2r %>%
 
 dzp=lp2r$V5-lp2r$mzp0
 lp2r$dzp=dzp
-std0=aggregate(lp2r$dzp,FUN=IQR,by=list(lp2r$V4))
+std0=aggregate(lp2r$dzp,FUN=std,by=list(lp2r$V4))
 
 year2=lp2r$V4+2
 lp2r$year2=year2
