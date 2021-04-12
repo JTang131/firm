@@ -75,22 +75,33 @@ dat2$fes=fes
 dat2$feindy=feindy
 wage=unique(dat2$V11)
 
-dat2_80 <- dat2%>%
-  filter(V4=="1980")
+#to see average firm growth rate vs growth of firm with TFP one std above 
+#implied dispersion effect by the growth rates
 
-wage=wage[-1]
-
-asd=c(1:(length(wage)))
-for (i in c(1:length(wage))){
-  asd[i]=sd(dat2_80$V5)
-  pdzp=reg25$coefficients[1]*dat2_80$V5+reg25$coefficients[2]*dat2_80$V5*wage[i]+
-   dat2_80$fes
-  dat2_80$V5=dat2_80$V5+pdzp
+avg=c(1:length(unique(dat2$V4)))*NaN
+sdg=c(1:length(unique(dat2$V4)))*NaN
+psdg=c(1:length(unique(dat2$V4)))*NaN
+for (i in c(1:length(unique(dat2$V4)))){
+  dat2_temp <- lp5r%>%
+    filter(V4==1980+i-1)
+  avg[i]=mean(dat2_temp$V1[which(abs(dat2_temp$V5-mean(dat2_temp$V5))<0.01)])
+  sdg[i]=sd(dat2_temp$V5)
+  ming=min(dat2_temp$V5)
+  psdg[i]=sd((dat2_temp$V5-ming)*0.269/100+dat2_temp$V5)
 }
+mean(avg)
+mean(psdg-sdg)/mean(sdg)
+mean(diff(sdg)/sdg[1:30])
+
+
+
+
+
+#predict using the regression model (which doesnt work very well)
 
 dat2_80 <- dat2%>%
   filter(V4=="1980")
-mean(dat2_80$V1[which(abs(dat2_80$V5-mean(dat2_80$V5))<0.01)])
+
 
 
 psd=c(1:(length(wage)))
