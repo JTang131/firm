@@ -30,7 +30,7 @@ attach(dat2)
 dat2=dat2[dat2$V4<2011,]
 #lp2r=lp2r[lp2r$V10<1981,]
 indyear=dat2$V3*10000+dat2$V4
-reg21=felm(V1~V5+V6+I(V5*V6)+V8+V10+V12+V13|indyear|0|V2,data = dat2)
+reg21=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg21)
 reg22=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = dat2)
 summary(reg22)
@@ -41,7 +41,7 @@ summary(reg24)
 wage=dat2$V6/dat2$V8
 reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
-reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = dat2)
+reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = dat2)
 summary(reg26)
 dat2$indyear=indyear
 dat2$wage=wage
@@ -153,7 +153,7 @@ attach(lp2r)
 lp2r=lp2r[lp2r$V4<2011,]
 #lp2r=lp2r[lp2r$V10<1991,]
 indyear=lp2r$V3*10000+lp2r$V4
-reg21_lp2=felm(V1~V5+V6+I(V5*V6)+V8+V12+V13+V10|indyear|0|V2,data = lp2r)
+reg21_lp2=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
 summary(reg21_lp2)
 reg22_lp2=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp2r)
 summary(reg22_lp2)
@@ -162,9 +162,9 @@ summary(reg23_lp2)
 reg24_lp2=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V3,data = lp2r)
 summary(reg24_lp2)
 wage=lp2r$V6/lp2r$V8
-reg25_lp2=felm(V1~V5+I(V11*V5)+V8+V12+V13|V4+V2|0|V2,data = lp2r)
+reg25_lp2=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp2r)
 summary(reg25_lp2)
-reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = lp2r)
+reg26_lp2=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = lp2r)
 summary(reg26_lp2)
 
 lp2r$me=reg26_lp2$coefficients[2]+reg26_lp2$coefficients[3]*lp2r$V5
@@ -217,7 +217,7 @@ lp3r <- read.csv("E:/firm project/data/lp3r.csv", header=FALSE)
 attach(lp3r)
 lp3r=lp3r[lp3r$V4<2011,]
 indyear=lp3r$V3*10000+lp3r$V4
-reg21_lp3=felm(V1~V5+V6+I(V5*V6)+V8+V10+V12+V13|indyear|0|V3,data = lp3r)
+reg21_lp3=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = lp3r)
 summary(reg21_lp3)
 reg22_lp3=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp3r)
 summary(reg22_lp3)
@@ -228,7 +228,7 @@ summary(reg24_lp3)
 wage=lp3r$V6/lp3r$V8
 reg25_lp3=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp3r)
 summary(reg25_lp3)
-reg26_lp3=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V2+V3|0|V2,data = lp3r)
+reg26_lp3=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V2+V3|0|V2,data = lp3r)
 summary(reg26_lp3)
 lp3r$indyear=indyear
 #lp3r$wage=wage
@@ -253,7 +253,7 @@ lp4r <- read.csv("E:/firm project/data/lp4r.csv", header=FALSE)
 attach(lp4r)
 lp4r=lp4r[lp4r$V4<2011,]
 indyear=lp4r$V3*10000+lp4r$V4
-reg21_lp4=felm(V1~V5+V6+I(V5*V6)+V8+V10+V12+V13|indyear|0|V3,data = lp4r)
+reg21_lp4=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = lp4r)
 summary(reg21_lp4)
 reg22_lp4=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp4r)
 summary(reg22_lp4)
@@ -264,7 +264,7 @@ summary(reg24_lp4)
 wage=lp4r$V6/lp4r$V8
 reg25_lp4=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp4r)
 summary(reg25_lp4)
-reg26_lp4=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V3+V2|0|V2,data = lp4r)
+reg26_lp4=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = lp4r)
 summary(reg26_lp4)
 lp4r$indyear=indyear
 #lp4r$wage=wage
@@ -288,7 +288,7 @@ summary(reg1_lp5)
 lp5r <- read.csv("E:/firm project/data/lp5r.csv", header=FALSE)
 attach(lp5r)
 indyear=lp5r$V3*10000+lp5r$V4
-reg21_lp5=felm(V1~V5+V6+I(V5*V6)+V8+V10+V12+V13|indyear|0|V2,data = lp5r)
+reg21_lp5=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = lp5r)
 summary(reg21_lp5)
 reg22_lp5=felm(V1~V5+V7+I(V5*V7)+V9+V10|indyear|0|V3,data = lp5r)
 summary(reg22_lp5)
@@ -299,7 +299,7 @@ summary(reg24_lp5)
 wage=lp5r$V6/lp5r$V8
 reg25_lp5=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = lp5r)
 summary(reg25_lp5)
-reg26_lp5=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,3)|V2+V3|0|V2,data = lp5r)
+reg26_lp5=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V2+V3|0|V2,data = lp5r)
 summary(reg26_lp5)
 lp5r$indyear=indyear
 lp5r$wage=wage
@@ -789,8 +789,93 @@ pred4=(std4[,2]-std0[,2])
 real4=diff(std0[,2],lag=4)
 
 
+#marginal effect vs TFP level
+p1=ggplot()+
+  geom_density(aes(x=dat2$V5),size=1,fill="grey")+
+  xlim(8,16)+
+  xlab("log TFP (LP1)")+
+  geom_line(aes(y=reg26$coefficients[2]+reg26$coefficients[3]*dat2$V5,x=dat2$V5),size=1,color="red",linetype = "dashed")+
+  scale_y_continuous(
+    # Features of the first axis
+    limits=c(-1,1),name = "Firm TFP Density",
+    
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~.*1)
+  ) +
+  theme_classic(base_size = 20)+
+  theme(axis.line.y.right = element_line(color = "red"), 
+        axis.ticks.y.right = element_line(color = "red"),
+        axis.text.y.right = element_text(color = "red"),
+        
+  ) 
+
+p2=ggplot()+
+  geom_density(aes(x=lp2r$V5),size=1,fill="grey")+
+  xlim(8,16)+
+  xlab("log TFP (LP2)")+
+  geom_line(aes(y=reg26_lp2$coefficients[2]+reg26_lp2$coefficients[3]*lp2r$V5,x=lp2r$V5),size=1,color="red",linetype = "dashed")+
+  scale_y_continuous(
+    # Features of the first axis
+    limits=c(-1,1),name = " ",
+    
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~.*1,name="Marginal Effect")
+  ) +
+  theme_classic(base_size = 20)+
+  theme(axis.line.y.right = element_line(color = "red"), 
+        axis.ticks.y.right = element_line(color = "red"),
+        axis.text.y.right = element_text(color = "red"), 
+        axis.title.y.right = element_text(color = "red")
+  ) 
+  
+p3=ggplot()+
+  geom_density(aes(x=lp3r$V5),size=1,fill="grey")+
+  xlim(8,16)+
+  xlab("log TFP (LP3)")+
+  geom_line(aes(y=reg26_lp3$coefficients[2]+reg26_lp3$coefficients[3]*lp3r$V5,x=lp3r$V5),size=1,color="red",linetype = "dashed")+
+  scale_y_continuous(
+    # Features of the first axis
+    limits=c(-1,1),name = "Firm TFP Density",
+    
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~.*1)
+  ) +
+  theme_classic(base_size = 20)+
+  theme(axis.line.y.right = element_line(color = "red"), 
+        axis.ticks.y.right = element_line(color = "red"),
+        axis.text.y.right = element_text(color = "red"),
+  ) 
+
+p4=ggplot()+
+  geom_density(aes(x=lp4r$V5),size=1,fill="grey")+
+  xlim(8,16)+
+  xlab("log TFP (LP4)")+
+  geom_line(aes(y=reg26_lp4$coefficients[2]+reg26_lp4$coefficients[3]*lp4r$V5,x=lp4r$V5),size=1,color="red",linetype = "dashed")+
+  scale_y_continuous(
+    # Features of the first axis
+    limits=c(-1,1),name = " ",
+    
+    # Add a second axis and specify its features
+    sec.axis = sec_axis(~.*1,name="Marginal Effect")
+  ) +
+  theme_classic(base_size = 20)+
+  theme(axis.line.y.right = element_line(color = "red"), 
+        axis.ticks.y.right = element_line(color = "red"),
+        axis.text.y.right = element_text(color = "red"), 
+        axis.title.y.right = element_text(color = "red")
+  ) 
+
+grid.arrange(p1, p2,p3, p4, nrow = 2)
 
 
+#RND Dynamics (not ideal result)
+
+datrnd <- read.csv("E:/firm project/data/datrnd3.csv", header=FALSE)
+attach(datrnd)
+datrnd=datrnd[datrnd$V4<2011,]
+indyear=datrnd$V3*10000+datrnd$V4
+regrnd1=felm(V1~V5+V6+V7+I(V9*V5)+V10+V11|indyear+V2|0|V2,data = datrnd)
+summary(regrnd1)
 
 
 
