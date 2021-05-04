@@ -287,6 +287,7 @@ summary(reg1_lp5)
 
 lp5r <- read.csv("E:/firm project/data/lp5r.csv", header=FALSE)
 attach(lp5r)
+lp4r=lp4r[lp4r$V4<2011,]
 indyear=lp5r$V3*10000+lp5r$V4
 reg21_lp5=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = lp5r)
 summary(reg21_lp5)
@@ -870,13 +871,20 @@ grid.arrange(p1, p2,p3, p4, nrow = 2)
 
 #RND Dynamics (not ideal result)
 
-datrnd <- read.csv("E:/firm project/data/datrnd3.csv", header=FALSE)
+datrnd <- read.csv("E:/firm project/data/datrnd5.csv", header=FALSE)
 attach(datrnd)
 datrnd=datrnd[datrnd$V4<2011,]
 indyear=datrnd$V3*10000+datrnd$V4
 regrnd1=felm(V1~V5+V6+V7+I(V9*V5)+V10+V11|indyear+V2|0|V2,data = datrnd)
 summary(regrnd1)
-
+regrnd2=felm(V1~V5+V6+V7+I(V9*V5)+V10+V11|indyear+V2|0|V2,data = datrnd)
+summary(regrnd2)
+regrnd3=felm(V1~V5+V6+V7+I(V9*V5)+V10+V11|indyear+V2|0|V2,data = datrnd)
+summary(regrnd3)
+regrnd4=felm(V1~V5+V6+V7+I(V9*V5)+V10+V11|indyear+V2|0|V2,data = datrnd)
+summary(regrnd4)
+regrnd5=felm(V1~V5+V6+V7+I(V9*V5)+V10+V11|indyear+V2|0|V2,data = datrnd)
+summary(regrnd5)
 
 
 
