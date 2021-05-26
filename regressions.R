@@ -38,7 +38,9 @@ dat89=dat2[dat2$V4<1990,]
 #dat89=dat2[dat2$V4>1999,]
 
 dat89=dat89 %>% 
-  group_by(V2) %>% 
+  group_by(V2)%>% 
+  add_count(V2) %>% 
+  filter(n>1) %>% 
   mutate(avg=mean(V1)) %>% 
   mutate(iniyr=min(V4)) %>% 
   select(avg,V2,V4,V5,iniyr) %>% 
@@ -50,6 +52,7 @@ ggplot(data = dat89)+
   
 
 summary(lm(avg~V5,data=dat89))
+
 
 
 
