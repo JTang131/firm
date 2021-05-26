@@ -27,31 +27,38 @@ r1=feols(V1~V5+I(V5*V6)|indyear+V2,data=dat1)
 
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
 attach(dat2)
-dat2=dat2[dat2$V4<2011,]
+#dat2=dat2[dat2$V4<2011,]
 
 #convergence before 1980
-dat89=dat2[dat2$V4>1999,]
-dat89=dat2[dat2$V4>1989 & dat2$V4<2000,]
-dat89=dat2[dat2$V4<1990,]
+dat10=dat2[dat2$V4>2009,]
+dat00=dat2[dat2$V4>1999 & dat2$V4<2010,]
+dat90=dat2[dat2$V4>1989 & dat2$V4<2000,]
+dat80=dat2[dat2$V4>1979 & dat2$V4<1990,]
+dat70=dat2[dat2$V4<1980,]
 
 #dat89=dat2[dat2$V4<2000,]
 #dat89=dat2[dat2$V4>1999,]
 
-dat89=dat89 %>% 
-  group_by(V2)%>% 
+datm=dat2 %>%
+  mutate(decade = floor(V4/10)*10) %>% 
+  group_by(decade,V2) %>%
   add_count(V2) %>% 
   filter(n>1) %>% 
-  mutate(avg=mean(V1)) %>% 
+  mutate(avg=median(V1)) %>% 
   mutate(iniyr=min(V4)) %>% 
-  select(avg,V2,V4,V5,iniyr) %>% 
-  filter(V4==iniyr)
+  filter(V4==iniyr & (decade>1970 & decade<2010))
 
-ggplot(data = dat89)+
-  geom_point(aes(x=V5,y=avg))+
-  geom_smooth(aes(x=V5,y=avg),method = "lm", se = F)
+ggplot(data = datm)+
+  geom_point(aes(x=V5,y=avg,color=factor(decade)))+
+  geom_smooth(aes(x=V5,y=avg,color=factor(decade)),method = "lm", se = F)+
+  coord_fixed(2)
+
   
 
-summary(lm(avg~V5,data=dat89))
+summary(lm(avg~V5,data=datm[datm$decade==1980,]))
+summary(lm(avg~V5,data=datm[datm$decade==1990,]))
+summary(lm(avg~V5,data=datm[datm$decade==2000,]))
+
 
 
 
