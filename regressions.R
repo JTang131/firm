@@ -34,8 +34,9 @@ dat89=dat2[dat2$V4>1999,]
 dat89=dat2[dat2$V4>1989 & dat2$V4<2000,]
 dat89=dat2[dat2$V4<1990,]
 
-dat89=dat2[dat2$V4<2000,]
-dat89=dat2[dat2$V4>1999,]
+#dat89=dat2[dat2$V4<2000,]
+#dat89=dat2[dat2$V4>1999,]
+
 dat89=dat89 %>% 
   group_by(V2) %>% 
   mutate(avg=mean(V1)) %>% 
