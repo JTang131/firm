@@ -28,7 +28,30 @@ r1=feols(V1~V5+I(V5*V6)|indyear+V2,data=dat1)
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
 attach(dat2)
 dat2=dat2[dat2$V4<2011,]
-#lp2r=lp2r[lp2r$V10<1981,]
+
+#convergence before 1980
+dat89=dat2[dat2$V4>1999,]
+dat89=dat2[dat2$V4>1989 & dat2$V4<2000,]
+dat89=dat2[dat2$V4<1990,]
+
+dat89=dat2[dat2$V4<2000,]
+dat89=dat2[dat2$V4>1999,]
+dat89=dat89 %>% 
+  group_by(V2) %>% 
+  mutate(avg=mean(V1)) %>% 
+  mutate(iniyr=min(V4)) %>% 
+  select(avg,V2,V4,V5,iniyr) %>% 
+  filter(V4==iniyr)
+
+ggplot(data = dat89)+
+  geom_point(aes(x=V5,y=avg))+
+  geom_smooth(aes(x=V5,y=avg),method = "lm", se = F)
+  
+
+summary(lm(avg~V5,data=dat89))
+
+
+
 indyear=dat2$V3*10000+dat2$V4
 reg21=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg21)
