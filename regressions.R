@@ -29,16 +29,7 @@ dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
 attach(dat2)
 #dat2=dat2[dat2$V4<2011,]
 
-#convergence before 1980
-dat10=dat2[dat2$V4>2009,]
-dat00=dat2[dat2$V4>1999 & dat2$V4<2010,]
-dat90=dat2[dat2$V4>1989 & dat2$V4<2000,]
-dat80=dat2[dat2$V4>1979 & dat2$V4<1990,]
-dat70=dat2[dat2$V4<1980,]
-
-#dat89=dat2[dat2$V4<2000,]
-#dat89=dat2[dat2$V4>1999,]
-
+#convergence
 datm=dat2 %>%
   mutate(decade = floor(V4/10)*10) %>% 
   group_by(decade,V2) %>%
@@ -46,20 +37,37 @@ datm=dat2 %>%
   filter(n>1) %>% 
   mutate(avg=median(V1)) %>% 
   mutate(iniyr=min(V4)) %>% 
-  filter(V4==iniyr & (decade>1970 & decade<2010))
+  filter(V4==iniyr & (decade==1980 | decade==1990 | decade==2000)) %>% 
+  group_by(decade) %>% 
+  mutate(quintile = ntile(V5, 5)) %>% group_by(decade,quintile) %>%   
+  summarise(mg=mean(avg))
 
 ggplot(data = datm)+
-  geom_point(aes(x=V5,y=avg,color=factor(decade)))+
-  geom_smooth(aes(x=V5,y=avg,color=factor(decade)),method = "lm", se = F)+
-  coord_fixed(2)
+  geom_point(aes(x=V5,y=avg,color=factor(decade),size=factor(decade)),position=position_jitter(h=0.2, w=0.2),
+             shape = 21)+
+  scale_size_manual(values=c(8,6,4))+
+  stat_smooth(aes(x=V5,y=avg,color=factor(decade)),method = "lm", formula = y ~ poly(x,2), se = F)+
+  coord_fixed(2)+
+  theme_classic(base_size = 20)
 
-  
+ggplot(datm)+
+  geom_line(aes(quintile,mg,color=factor(decade)))  
 
 summary(lm(avg~V5,data=datm[datm$decade==1980,]))
 summary(lm(avg~V5,data=datm[datm$decade==1990,]))
 summary(lm(avg~V5,data=datm[datm$decade==2000,]))
 
+#fixed effect convergence
+datm=dat2 %>%
+  mutate(decade = floor(V4/10)*10) %>% 
+  group_by(decade,V2) %>%
+  add_count(V2) %>% 
+  filter(n>1) %>% 
+  filter((decade>1970 & decade<2010))
 
+summary(felm(V1~V5|V2+V4|0|V2,data=datm[datm$decade==1980,]))
+summary(felm(V1~V5|V2+V4|0|V2,data=datm[datm$decade==1990,]))
+summary(felm(V1~V5|V2+V4|0|V2,data=datm[datm$decade==2000,]))
 
 
 
