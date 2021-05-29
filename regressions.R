@@ -30,30 +30,30 @@ attach(dat2)
 #dat2=dat2[dat2$V4<2011,]
 
 #convergence
-datm=dat2 %>%
+datm=dat1 %>%
   mutate(decade = floor(V4/10)*10) %>% 
   group_by(decade,V2) %>%
   add_count(V2) %>% 
   filter(n>1) %>% 
-  mutate(avg=median(V1)) %>% 
-  mutate(iniyr=min(V4)) %>% 
+  mutate(avg=median(V1)) %>%   
+  mutate(iniyr=min(V4)) %>%  
   filter(V4==iniyr & (decade==1980 | decade==1990 | decade==2000)) %>% 
   ungroup() %>% 
   select(decade,avg,iniyr,V5) %>% 
   group_by(decade) %>% 
-  mutate(quintile = ntile(V5, 5)) %>% group_by(quintile,decade) %>%   
-  summarise(mg=mean(avg))
+  mutate(quintile = as.numeric(cut(V5, breaks=quantile(V5, probs=seq(0,1, length  = 6),type = 7),include.lowest=T)))%>% 
+  group_by(quintile,decade) %>%    
+  summarise(mg=median(avg))
 
 ggplot(data = datm)+
   geom_point(aes(x=V5,y=avg,color=factor(decade),size=factor(decade)),position=position_jitter(h=0.2, w=0.2),
              shape = 21)+
   scale_size_manual(values=c(8,6,4))+
   geom_smooth(aes(x=V5,y=avg,color=factor(decade)),method = "lm", formula = y ~ poly(x,2), se = F)+
-  coord_fixed(2)+
-  theme_classic(base_size = 20)
+  coord_fixed(1)
 
 ggplot(datm)+
-  geom_line(aes(quintile,mg,color=factor(decade)))  
+  geom_line(aes(x=quintile,y=mg,color=factor(decade)))  
 
 summary(lm(avg~V5,data=datm[datm$decade==1980,]))
 summary(lm(avg~V5,data=datm[datm$decade==1990,]))
