@@ -38,12 +38,12 @@ datm=dat2 %>%
   #mutate(avg=median(V1)) %>%   
   #mutate(iniyr=min(V4)) %>%  
   filter((decade==1980 | decade==1990 | decade==2000)) 
-  ungroup() %>% 
-  select(decade,V1,V5,avg) %>% 
-  group_by(decade) %>% 
-  mutate(quintile = as.numeric(cut(V5, breaks=quantile(V5, probs=seq(0,1, length  = 6),type = 7),include.lowest=T)))%>% 
-  group_by(quintile,decade) %>%    
-  summarise(mg=median(V1))
+  #ungroup() %>% 
+  #select(decade,V1,V5,avg) %>% 
+  #group_by(decade) %>% 
+  #mutate(quintile = as.numeric(cut(V5, breaks=quantile(V5, probs=seq(0,1, length  = 6),type = 7),include.lowest=T)))%>% 
+  #group_by(quintile,decade) %>%    
+  #summarise(mg=median(V1))
 
 ggplot(data = datm)+
   geom_point(aes(x=V5,y=V1,color=factor(decade),size=factor(decade)),position=position_jitter(h=0.2, w=0.2),
@@ -54,8 +54,8 @@ ggplot(data = datm)+
   theme_classic(base_size = 20)
 
 
-ggplot(datm)+
-  geom_line(aes(x=quintile,y=mg,color=factor(decade)))  
+#ggplot(datm)+
+  #geom_line(aes(x=quintile,y=mg,color=factor(decade)))  
 
 summary(lm(V1~V5,data=datm[datm$decade==1980,]))
 summary(lm(V1~V5,data=datm[datm$decade==1990,]))
