@@ -16,7 +16,7 @@ library(latex2exp)
 dat1 <- read.csv("E:/firm project/data/dat1.csv", header=FALSE)
 
 attach(dat1)
-#dat1=dat1[dat1$V4<2008]
+dat1=dat1[dat1$V4<2011,]
 indyear=dat1$V3*10000+dat1$V4
 dat1$indyear=indyear
 reg1=felm(V1~V5+I(V5*V6)+V7+V8|indyear+V2|0|V2,data = dat1)
@@ -27,7 +27,7 @@ r1=feols(V1~V5+I(V5*V6)|indyear+V2,data=dat1)
 
 dat2 <- read.csv("E:/firm project/data/dat2.csv", header=FALSE)
 attach(dat2)
-#dat2=dat2[dat2$V4<2011,]
+dat2=dat2[dat2$V4<2011,]
 
 #convergence
 datm=dat2 %>%
@@ -49,8 +49,10 @@ ggplot(data = datm)+
   geom_point(aes(x=V5,y=V1,color=factor(decade),size=factor(decade)),position=position_jitter(h=0.2, w=0.2),
              shape = 21)+
   scale_size_manual(values=c(8,6,4))+
-  geom_smooth(aes(x=V5,y=V1,color=factor(decade)),method = "lm", formula = y ~ poly(x,1), se = F)+
-  coord_fixed(1.5)+
+  geom_smooth(aes(x=V5,y=V1,color=factor(decade)),size=1.5,method = "lm", formula = y ~ poly(x,3), se = F)+
+  coord_fixed(1)+
+  xlab('TFP level at t')+
+  ylab('TFP growth t+1')+
   theme_classic(base_size = 20)
 
 
@@ -60,8 +62,9 @@ ggplot(data = datm)+
 summary(lm(V1~V5,data=datm[datm$decade==1980,]))
 summary(lm(V1~V5,data=datm[datm$decade==1990,]))
 summary(lm(V1~V5,data=datm[datm$decade==2000,]))
+summary(lm(V1~V5,data=datm))
 
-0#fixed effect convergence
+#fixed effect convergence
 datm=dat2 %>%
   mutate(decade = floor(V4/10)*10) %>% 
   group_by(decade,V2) %>%
@@ -87,15 +90,13 @@ summary(reg24)
 wage=dat2$V6/dat2$V8
 reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
-reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = dat2)
+ reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = dat2)
 summary(reg26)
 dat2$indyear=indyear
 dat2$wage=wage
 r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=dat2)
 summary(r25,cluster=dat2$V2)
-#level which makes no sense
-reg20=felm(V1~V5+I(V14*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
-summary(reg20)
+
 
 v2=unique(dat2$V2)
 dat2=dat2[(dat2$V2 %in% v2[which(tapply(dat2$V2,dat2$V2,length)>10)]),]
@@ -161,18 +162,18 @@ for (i in c(1:length(wage))){
 plot(asd,type = 'l')
 lines(psd)
 
-#predict using full sample
+#predict using full sample. It is not correct because it doesnt account for the cumulative effects
 pzp=predict(r25)+dat2$V5
 azp=dat2$V5+dat2$V1
 pds=aggregate(pzp,FUN=sd,by=list(year=dat2$V4))
 ads=aggregate(azp,FUN=sd,by=list(year=dat2$V4))
 plot(ads,type="l",ylim=c(0.3,1.5))
-lines(pds)
+plot(pds,type="l",ylim=c(0.3,1.5))
 newd2=dat2
 newd2[,"V11"]=0
-pzp=predict(r25,newdata=newd2)+dat2$V5
-pds=aggregate(pzp,FUN=std,by=list(year=dat2$V4))
-lines(pds) 
+npzp=predict(r25,newdata=newd2)+dat2$V5
+npds=aggregate(npzp,FUN=std,by=list(year=dat2$V4))
+lines(npds) 
 
 v11=sum(unique(dat2$V11))
 f80=dat2$V5[dat2$V4==1982]
