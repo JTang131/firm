@@ -49,7 +49,7 @@ ggplot(data = datm)+
   geom_point(aes(x=V5,y=V1,color=factor(decade),size=factor(decade)),position=position_jitter(h=0.2, w=0.2),
              shape = 21)+
   scale_size_manual(values=c(8,6,4))+
-  geom_smooth(aes(x=V5,y=V1,color=factor(decade)),size=1.5,method = "lm", formula = y ~ poly(x,3), se = F)+
+  geom_smooth(aes(x=V5,y=V1,color=factor(decade)),size=1.5,method = "lm", formula = y ~ poly(x,2), se = F)+
   coord_fixed(1)+
   xlab('TFP level at t')+
   ylab('TFP growth t+1')+
@@ -71,11 +71,10 @@ datm=dat2 %>%
   add_count(V2) %>% 
   filter(n>1) %>% 
   filter((decade>1970 & decade<2010))
-
-summary(felm(V1~V5|V2+V4|0|V2,data=datm[datm$decade==1980,]))
-summary(felm(V1~V5|V2+V4|0|V2,data=datm[datm$decade==1990,]))
-summary(felm(V1~V5|V2+V4|0|V2,data=datm[datm$decade==2000,]))
-
+datm$indyear=datm$V3*10000+datm$V4
+summary(felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm[datm$decade==1980,]))
+summary(felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm[datm$decade==1990,]))
+summary(felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm[datm$decade==2000,]))
 
 
 indyear=dat2$V3*10000+dat2$V4
@@ -90,8 +89,10 @@ summary(reg24)
 wage=dat2$V6/dat2$V8
 reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
- reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = dat2)
+reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = dat2)
 summary(reg26)
+
+
 dat2$indyear=indyear
 dat2$wage=wage
 r25=feols(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2,data=dat2)
