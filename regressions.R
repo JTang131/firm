@@ -36,7 +36,7 @@ datm=dat2 %>%
   add_count(V2) %>% 
   filter(n>1) %>% 
   #mutate(avg=median(V1)) %>%   
-  #mutate(iniyr=min(V4)) %>%  
+  #mutate(iniyr=min(V4)) %>% 
   filter((decade==1980 | decade==1990 | decade==2000)) 
   #ungroup() %>% 
   #select(decade,V1,V5,avg) %>% 
@@ -50,19 +50,23 @@ ggplot(data = datm)+
              shape = 21)+
   scale_size_manual(values=c(8,6,4))+
   geom_smooth(aes(x=V5,y=V1,color=factor(decade)),size=1.5,method = "lm", formula = y ~ poly(x,2), se = F)+
-  coord_fixed(1)+
   xlab('TFP level at t')+
-  ylab('TFP growth t+1')+
+  ylab('TFP growth rate t+1')+
   theme_classic(base_size = 20)
 
 
 #ggplot(datm)+
   #geom_line(aes(x=quintile,y=mg,color=factor(decade)))  
 
-summary(lm(V1~V5,data=datm[datm$decade==1980,]))
-summary(lm(V1~V5,data=datm[datm$decade==1990,]))
-summary(lm(V1~V5,data=datm[datm$decade==2000,]))
-summary(lm(V1~V5,data=datm))
+r1=lm(V1~poly(V5,3),data=datm[datm$decade==1980,])
+r2=lm(avg~V5+V8+V12+V13,data=datm[datm$decade==1990,])
+r3=lm(avg~V5+V8+V12+V13,data=datm[datm$decade==2000,])
+r4=lm(V1~V5,data=datm)
+summary(r1)
+summary(r2)
+summary(r3)
+summary(r4)
+
 
 #fixed effect convergence
 datm=dat2 %>%
@@ -72,9 +76,16 @@ datm=dat2 %>%
   filter(n>1) %>% 
   filter((decade>1970 & decade<2010))
 datm$indyear=datm$V3*10000+datm$V4
-summary(felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm[datm$decade==1980,]))
-summary(felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm[datm$decade==1990,]))
-summary(felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm[datm$decade==2000,]))
+r1=felm(V1~V5+V8+V12+V13|indyear|0|V2,data=datm[datm$decade==1980,])
+r2=felm(V1~V5+V8+V12+V13|indyear|0|V2,data=datm[datm$decade==1990,])
+r3=felm(V1~V5+V8+V12+V13|indyear|0|V2,data=datm[datm$decade==2000,])
+r4=felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm)
+summary(r1)
+summary(r2)
+summary(r3)
+summary(r4)
+
+
 
 
 indyear=dat2$V3*10000+dat2$V4
