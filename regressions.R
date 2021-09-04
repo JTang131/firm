@@ -58,9 +58,9 @@ ggplot(data = datm)+
 #ggplot(datm)+
   #geom_line(aes(x=quintile,y=mg,color=factor(decade)))  
 
-r1=lm(V1~poly(V5,3),data=datm[datm$decade==1980,])
-r2=lm(avg~V5+V8+V12+V13,data=datm[datm$decade==1990,])
-r3=lm(avg~V5+V8+V12+V13,data=datm[datm$decade==2000,])
+r1=lm(V1~V5,data=datm[datm$decade==1980,])
+r2=lm(V1~V5,data=datm[datm$decade==1990,])
+r3=lm(V1~V5,data=datm[datm$decade==2000,])
 r4=lm(V1~V5,data=datm)
 summary(r1)
 summary(r2)
