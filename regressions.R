@@ -37,8 +37,8 @@ datm=dat2 %>%
   filter(n>1) %>% 
   #mutate(avg=median(V1)) %>%   
   #mutate(iniyr=min(V4)) %>% 
-  filter((decade==1980 | decade==1990 | decade==2000)) 
-  #ungroup() %>% 
+  filter((decade==1980 | decade==1990 | decade==2000)) %>% 
+  ungroup() 
   #select(decade,V1,V5,avg) %>% 
   #group_by(decade) %>% 
   #mutate(quintile = as.numeric(cut(V5, breaks=quantile(V5, probs=seq(0,1, length  = 6),type = 7),include.lowest=T)))%>% 
@@ -67,7 +67,15 @@ summary(r2)
 summary(r3)
 summary(r4)
 
-
+#convergence rate by percentile
+datm=datm %>% 
+  group_by(decade) %>% 
+  mutate(rank=ntile(V5,10))
+datm$rank=factor(datm$rank)
+r1q=lm(V1~relevel(rank,ref="10")+V8+V12+V13,data=datm[datm$decade==2000,])
+r1q=lm(V1~I(V5*I(rank==1))+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+V8+V12+V13,data=datm[datm$decade==1990,])
+r1q=lm(V1~I(V5*I(rank==1))+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+V8+V12+V13,data=datm[datm$decade==2000,])
+summary(r1q)
 #fixed effect convergence
 datm=dat2 %>%
   mutate(decade = floor(V4/10)*10) %>% 
