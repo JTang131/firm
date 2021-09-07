@@ -35,7 +35,7 @@ datm=dat2 %>%
   group_by(decade,V2) %>%
   add_count(V2) %>% 
   filter(n>1) %>% 
-  mutate(avg=tail(V5,n=1)) %>% 
+  mutate(avg=mean(V5)) %>% 
   #mutate(avg=median(V1)) %>%   
   #mutate(iniyr=min(V4)) %>% 
   filter((decade==1980 | decade==1990 | decade==2000)) %>% 
@@ -85,38 +85,26 @@ datm=dat2 %>%
   filter(n>1) %>% 
   filter((decade>1970 & decade<2010))
 datm$indyear=datm$V3*10000+datm$V4
-r1=felm(V1~V5|V2|0|V2,data=datm[datm$decade==1980,])
+r1=felm(V1~V5+V8+V12+V13|indyear+V2|0|V2,data=datm[datm$decade==1980,])
 r2=felm(V1~V5|V2|0|V2,data=datm[datm$decade==1990,])
-r3=felm(V1~V5|V2|0|V2,data=datm[datm$decade==2000,])
+r3=felm(V1~V5+V8+V12+V13|indyear+V2|0|V2,data=datm[datm$decade==2000,])
 r4=felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm)
 summary(r1)
 summary(r2)
 summary(r3)
 summary(r4)
 
-fe=getfe(r1)
-#options(warn=2)
-fes=c(1:length(datm[datm$decade==1980,]$V2))
-i=1
-for (x in datm[datm$decade==1980,]$V2){
-  fes[i]=fe$effect[fe$fe=="V2" & fe$idx==x]
-  i=i+1
-}
+fe1=getfe(r1)
+fe3=getfe(r3)
 mean_v5_80=aggregate(x = datm[datm$decade==1980,]$avg, by = list(datm[datm$decade==1980,]$V2), FUN = "mean")
 mean_v5_00=aggregate(x = datm[datm$decade==2000,]$avg, by = list(datm[datm$decade==2000,]$V2), FUN = "mean")
 
 
-fe=getfe(r3)
-#options(warn=2)
-fes=c(1:length(datm[datm$decade==2000,]$V2))
-i=1
-for (x in datm[datm$decade==2000,]$V2){
-  fes[i]=fe$effect[fe$fe=="V2" & fe$idx==x]
-  i=i+1
-}
+cor(fe1$effect[fe1$fe=="V2"],mean_v5_80)
+cor(fe3$effect[fe3$fe=="V2"],mean_v5_00)
 
-cor(fe$effect[fe$fe=="V2"],mean_v5_00)
-
+std(fe1$effect[fe1$fe=="V2"])/(-r1$coefficients[1])
+std(fe3$effect[fe3$fe=="V2"])/(-r3$coefficients[1])
 
 
 indyear=dat2$V3*10000+dat2$V4
