@@ -62,7 +62,7 @@ ggplot(data = datm)+
 r1=lm(V1~V5,data=datm[datm$decade==1980,])
 r2=lm(V1~V5,data=datm[datm$decade==1990,])
 r3=lm(V1~V5,data=datm[datm$decade==2000,])
-r4=lm(V1~V5,data=datm)
+r4=lm(V1~I(V5*I(decade==1980))+I(V5*I(decade==1990))+I(V5*I(decade==2000)),data=datm)
 summary(r1)
 summary(r2)
 summary(r3)
@@ -71,11 +71,10 @@ summary(r4)
 #convergence rate by percentile
 datm=datm %>% 
   group_by(decade) %>% 
-  mutate(rank=ntile(V5,10))
-datm$rank=factor(datm$rank)
-r1q=lm(V1~relevel(rank,ref="10")+V8+V12+V13,data=datm[datm$decade==2000,])
-r1q=lm(V1~I(V5*I(rank==1))+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+V8+V12+V13,data=datm[datm$decade==1990,])
-r1q=lm(V1~I(V5*I(rank==1))+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+V8+V12+V13,data=datm[datm$decade==2000,])
+  mutate(rank=ntile(V5,5))
+r1q=lm(V1~I(V5*I(rank==1))+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+I(V5*I(rank==5))+V8+V12+V13,data=datm[datm$decade==1980,])
+r1q=lm(V1~I(V5*I(rank==1))+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+I(V5*I(rank==5))+V8+V12+V13,data=datm[datm$decade==1990,])
+r1q=lm(V1~I(V5*I(rank==1))+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+I(V5*I(rank==5))+V8+V12+V13,data=datm[datm$decade==2000,])
 summary(r1q)
 #fixed effect convergence
 datm=dat2 %>%
@@ -86,9 +85,9 @@ datm=dat2 %>%
   filter((decade>1970 & decade<2010))
 datm$indyear=datm$V3*10000+datm$V4
 r1=felm(V1~V5+V8+V12+V13|indyear+V2|0|V2,data=datm[datm$decade==1980,])
-r2=felm(V1~V5|V2|0|V2,data=datm[datm$decade==1990,])
+r2=felm(V1~V5+V8+V12+V13|indyear+V2|0|V2,data=datm[datm$decade==1990,])
 r3=felm(V1~V5+V8+V12+V13|indyear+V2|0|V2,data=datm[datm$decade==2000,])
-r4=felm(V1~V5+V8+V12+V13|V2+indyear|0|V2,data=datm)
+r4=felm(V1~I(V5*I(decade==1980))+I(V5*I(decade==1990))+I(V5*I(decade==2000))+V8+V12+V13|V2+indyear|0|V2,data=datm)
 summary(r1)
 summary(r2)
 summary(r3)
@@ -96,6 +95,7 @@ summary(r4)
 
 fe1=getfe(r1)
 fe3=getfe(r3)
+fe4=getfe(r4)
 mean_v5_80=aggregate(x = datm[datm$decade==1980,]$avg, by = list(datm[datm$decade==1980,]$V2), FUN = "mean")
 mean_v5_00=aggregate(x = datm[datm$decade==2000,]$avg, by = list(datm[datm$decade==2000,]$V2), FUN = "mean")
 
