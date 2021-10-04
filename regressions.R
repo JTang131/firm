@@ -78,6 +78,13 @@ r2q=lm(V1~V5+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+I(V5*I(rank==5))
       I(V5*I(rank==7))+I(V5*I(rank==8))+I(V5*I(rank==9))+I(V5*I(rank==10)),data=datm[datm$decade==1990,])
 r3q=lm(V1~V5+I(V5*I(rank==2))+I(V5*I(rank==3))+I(V5*I(rank==4))+I(V5*I(rank==5))+I(V5*I(rank==6))+
       I(V5*I(rank==7))+I(V5*I(rank==8))+I(V5*I(rank==9))+I(V5*I(rank==10)),data=datm[datm$decade==2000,])
+
+r1q=lm(V1~0+I(rank==1)+I(rank==2)+I(rank==3)+I(rank==4)+I(rank==5)+I(rank==6)+
+         I(rank==7)+I(rank==8)+I(rank==9)+I(rank==10),data=datm[datm$decade==1980,])
+r2q=lm(V1~0+I(rank==1)+I(I(rank==2))+I(I(rank==3))+I(I(rank==4))+I(I(rank==5))+I(I(rank==6))+
+         I(I(rank==7))+I(I(rank==8))+I(I(rank==9))+I(I(rank==10)),data=datm[datm$decade==1990,])
+r3q=lm(V1~0+I(rank==1)+I(I(rank==2))+I(I(rank==3))+I(I(rank==4))+I(I(rank==5))+I(I(rank==6))+
+         I(I(rank==7))+I(I(rank==8))+I(I(rank==9))+I(I(rank==10)),data=datm[datm$decade==2000,])
 summary(r1q)
 summary(r2q)
 summary(r3q)
