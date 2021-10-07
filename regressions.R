@@ -113,6 +113,16 @@ summary(r5)
 fe1=getfe(r1)
 fe3=getfe(r3)
 fe4=getfe(r4)
+
+d80=unique(datm$V2[datm$decade==1980])
+effect=c(1:length(d80))*NaN
+i=1
+for (x in d80){
+  effect[i]=fe4$effect[fe4$fe=="V2" & fe4$idx==x]
+  i=i+1
+}
+
+
 mean_v5_80=aggregate(x = datm[datm$decade==1980,]$avg, by = list(datm[datm$decade==1980,]$V2), FUN = "mean")
 mean_v5_00=aggregate(x = datm[datm$decade==2000,]$avg, by = list(datm[datm$decade==2000,]$V2), FUN = "mean")
 
@@ -134,7 +144,7 @@ summary(reg23)
 reg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = dat2)
 summary(reg24)
 wage=dat2$V6/dat2$V8
-reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
+reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = datm)
 summary(reg25)
 reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = dat2)
 summary(reg26)
@@ -166,6 +176,15 @@ for (x in dat2$indyear){
   feindy[i]=fe$effect[fe$idx==x]
   i=i+1
 }
+
+d80=unique(datm$V2[datm$decade==1980])
+effect=c(1:length(d80))*NaN
+i=1
+for (x in d80){
+  effect[i]=fe$effect[fe$fe=="V2" & fe$idx==x]
+  i=i+1
+}
+
 dat2$fes=fes
 dat2$feindy=feindy
 wage=unique(dat2$V11)
