@@ -118,7 +118,7 @@ d80=unique(datm$V2[datm$decade==1980])
 effect=c(1:length(d80))*NaN
 i=1
 for (x in d80){
-  effect[i]=fe4$effect[fe4$fe=="V2" & fe4$idx==x]
+  effect[i]=fe1$effect[fe1$fe=="V2" & fe1$idx==x]
   i=i+1
 }
 
@@ -130,8 +130,10 @@ mean_v5_00=aggregate(x = datm[datm$decade==2000,]$avg, by = list(datm[datm$decad
 cor(fe1$effect[fe1$fe=="V2"],mean_v5_80)
 cor(fe3$effect[fe3$fe=="V2"],mean_v5_00)
 
-std(fe1$effect[fe1$fe=="V2"])/(-r1$coefficients[1])
-std(fe3$effect[fe3$fe=="V2"])/(-r3$coefficients[1])
+sqrt((sd(fe1$effect[fe1$fe=="V2"])/(-r1$coefficients[1]))^2+0.3267^2/(1-(1+r1$coefficients[1])^2))
+sqrt((sd(fe3$effect[fe3$fe=="V2"])/(-r3$coefficients[1]))^2+0.5944^2/(1-(1+r3$coefficients[1])^2))
+sqrt((sd(fe1$effect[fe1$fe=="V2"])/(-r3$coefficients[1]))^2+0.3267^2/(1-(1+r3$coefficients[1])^2))
+
 
 
 indyear=dat2$V3*10000+dat2$V4
@@ -144,7 +146,7 @@ summary(reg23)
 reg24=felm(V1~V5+V7+I(V5*V7)+V9|V2+V4|0|V2,data = dat2)
 summary(reg24)
 wage=dat2$V6/dat2$V8
-reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = datm)
+reg25=felm(V1~V5+I(V11*V5)+V8+V12+V13|indyear+V2|0|V2,data = dat2)
 summary(reg25)
 reg26=felm(V1~V5+V11+I(V11*V5)+V8+V12+V13+poly(V4,5)|V3+V2|0|V2,data = dat2)
 summary(reg26)
@@ -401,7 +403,7 @@ summary(reg1_lp5)
 
 lp5r <- read.csv("E:/firm project/data/lp5r.csv", header=FALSE)
 attach(lp5r)
-lp4r=lp4r[lp4r$V4<2011,]
+lp5r=lp5r[lp5r$V4<2011,]
 indyear=lp5r$V3*10000+lp5r$V4
 reg21_lp5=felm(V1~V5+V6+V8+V12+V13|indyear+V2|0|V2,data = lp5r)
 summary(reg21_lp5)
